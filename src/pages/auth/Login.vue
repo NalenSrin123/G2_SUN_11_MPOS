@@ -1,77 +1,138 @@
-<template>
-  <!-- Page wrapper: full-height background and centered card -->
-  <div class="min-h-screen bg-slate-100">
-    <div class="mx-auto flex min-h-screen max-w-md items-center px-4">
-      <div class="w-full bg-white p-8 shadow-xl rounded-sm">
 
-        <!-- Header: title and subtitle -->
-        <div class="mb-6 text-center">
-          <h1 class="text-2xl font-semibold text-slate-900">Welcome back</h1>
-          <p class="mt-1 text-sm text-slate-500">Login to continue</p>
+<template>
+  <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-md border border-gray-100">
+      
+      <div class="text-center">
+        <h2 class="text-3xl font-extrabold text-gray-900">Reset your password</h2>
+        <p class="mt-2 text-sm text-gray-600">
+          Please enter your new password below.
+        </p>
+      </div>
+
+      <form class="mt-8 space-y-6" @submit.prevent="handleResetPassword">
+        
+        <div v-if="errorMessage" class="p-4 text-sm text-red-700 bg-red-50 rounded-lg" role="alert">
+          {{ errorMessage }}
+        </div>
+        
+        <div v-if="successMessage" class="p-4 text-sm text-green-700 bg-green-50 rounded-lg" role="alert">
+          {{ successMessage }}
         </div>
 
-        <!-- Form: uses @submit.prevent to run `onSubmit` without page reload -->
-        <form class="space-y-4" @submit.prevent="onSubmit">
-
-          <!-- Email input group: label + BaseInput bound to `form.email` -->
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-slate-700">Email</label>
-            <BaseInput v-model="form.email" type="email" placeholder="you@example.com" required />
+        <div class="space-y-4 rounded-md shadow-sm">
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+              New Password
+            </label>
+            <input
+              id="password"
+              v-model="password"
+              type="password"
+              required
+              class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              placeholder="••••••••"
+              :disabled="isSubmitting"
+            />
           </div>
 
-          <!-- Password input group: label + BaseInput bound to `form.password` -->
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-slate-700">Password</label>
-            <BaseInput v-model="form.password" type="password" placeholder="Your password" required />
+          <div>
+            <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">
+              Confirm New Password
+            </label>
+            <input
+              id="confirm-password"
+              v-model="confirmPassword"
+              type="password"
+              required
+              class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              placeholder="••••••••"
+              :disabled="isSubmitting"
+            />
           </div>
+        </div>
 
-          <!-- Submit button: `BaseButton` receives props for text, color and loading state.
-               `:disabled` prevents submission when fields are empty. Clicking also calls `onSubmit`. -->
-          <BaseButton text="Login" color="primary" :loading="loading" :disabled="!form.email || !form.password" @click="onSubmit" />
+        <div class="text-xs text-gray-500 flex flex-col space-y-1">
+          <span :class="isPasswordValid ? 'text-green-600' : 'text-gray-500'">
+            ✓ At least 8 characters
+          </span>
+          <span :class="doPasswordsMatch && confirmPassword ? 'text-green-600' : 'text-gray-500'">
+            ✓ Passwords match
+          </span>
+        </div>
 
-        </form>
-
-        <!-- Footer: link to registration page -->
-        <p class="mt-6 text-center text-sm text-slate-600">
-          Don't have an account?
-          <RouterLink class="font-semibold text-blue-600 hover:text-blue-700" to="/register">Create one</RouterLink>
-        </p>
-
-      </div>
+        <div>
+          <button
+            type="submit"
+            :disabled="isSubmitting"
+            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+          >
+            <svg 
+              v-if="isSubmitting" 
+              class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" 
+              xmlns="http://www.w3.org/2000/svg" 
+              fill="none" 
+              viewBox="0 0 24 24"
+            >
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            
+            {{ isSubmitting ? 'Updating password...' : 'Reset Password' }}
+          </button>
+        </div>
+      </form>
+      
     </div>
   </div>
 </template>
-
 <script setup>
-// Imports: Vue composition API utilities and shared base components
-import { reactive, ref } from 'vue'
-import BaseInput from '@/components/base/BaseInput.vue'
-import BaseButton from '@/components/base/BaseButton.vue'
+import { ref, computed } from 'vue'
 
-// `loading` indicates an in-flight async request (disables the button and shows spinner)
-const loading = ref(false)
+// State management
+const password = ref('')
+const confirmPassword = ref('')
+const isSubmitting = ref(false)
+const errorMessage = ref('')
+const successMessage = ref('')
 
-// `form` holds the reactive form fields bound via `v-model` to the inputs above
-const form = reactive({
-  email: '',
-  password: ''
-})
+// Simple validation: Password must be at least 8 characters
+const isPasswordValid = computed(() => password.value.length >= 8)
 
-// `onSubmit` validates the form, toggles loading, performs the submit (simulated here),
-// and then clears the loading state. Keep it `async` so real API calls can be awaited.
-const onSubmit = async () => {
-  // Basic client-side validation: ensure fields are not empty
-  if (!form.email || !form.password) return
+// Check if both passwords match
+const doPasswordsMatch = computed(() => password.value === confirmPassword.value)
 
-  loading.value = true
+// Form submission handler
+const handleResetPassword = async () => {
+  // Reset previous messages
+  errorMessage.value = ''
+  successMessage.value = ''
 
-  // Log the payload for debugging (replace with real API call)
-  console.log('Login submit', { ...form })
+  // Client-side validation guards
+  if (!isPasswordValid.value) {
+    errorMessage.value = 'Password must be at least 8 characters long.'
+    return
+  }
 
-  // simulate API call latency; replace this with an actual request
-  await new Promise(r => setTimeout(r, 1000))
+  if (!doPasswordsMatch.value) {
+    errorMessage.value = 'Passwords do not match.'
+    return
+  }
 
-  // Reset loading after request completes
-  loading.value = false
+  try {
+    isSubmitting.value = true
+    
+    // Simulate API Call (Replace with your actual Axios/Fetch request)
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    
+    successMessage.value = 'Your password has been successfully reset!'
+    // Clear fields on success
+    password.value = ''
+    confirmPassword.value = ''
+  } catch (error) {
+    errorMessage.value = 'Something went wrong. Please try again.'
+  } finally {
+    isSubmitting.value = false
+  }
 }
-</script>
+</script> 
