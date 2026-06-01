@@ -27,6 +27,22 @@ import Preview from '@/pages/preview/Preview.vue'
 import Home from '@/pages/home/Home.vue'
 import NotFound from '@/pages/NotFound.vue'
 
+
+
+
+
+// Dashboard page components for sidebar navigation
+//=======================================================================================
+import Overview from '@/pages/dashboard/components/Overview.vue'
+import Order from '@/pages/dashboard/components/Order.vue'
+import Product from '@/pages/dashboard/components/Product.vue'
+import Inventory from '@/pages/dashboard/components/Inventory.vue'
+import Setting from '@/pages/dashboard/components/Setting.vue'
+//========================================================================================
+
+
+
+
 /**
  * Route definitions
  * Each route maps a URL path to a specific page component
@@ -49,6 +65,23 @@ const routes = [
    * Typically requires authentication (can add guards later)
    */
   { path: '/dashboard', component: Dashboard },
+
+
+
+
+   /**
+   * Dashboard feature routes (for sidebar navigation)
+   */
+  //====================================================================
+  { path: '/overview', component: Overview },
+  { path: '/orders', component: Order },
+  { path: '/products', component: Product },
+  { path: '/inventory', component: Inventory },
+  { path: '/settings', component: Setting },
+  //====================================================================
+
+
+
 
   /**
    * Authentication routes

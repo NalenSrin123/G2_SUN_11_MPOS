@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import Sidebar from './pages/dashboard/Sidebar.vue';
+
+</script>
+
 /*
 |--------------------------------------------------------------------------
 | File: App.vue
@@ -20,5 +25,6 @@
 
 <template>
   <!-- Router outlet: renders matched route component -->
-  <RouterView />
+   <Sidebar />
+  <!-- <RouterView /> -->
 </template>
