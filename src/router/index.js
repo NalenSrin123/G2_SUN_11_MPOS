@@ -37,12 +37,12 @@ const routes = [
     component: () => import('@/pages/dashboard/Dashboard.vue'),
     meta: { layout: 'dashboard', requiresAuth: true },
   },
-  {
-    path: '/dashboard/orders',
-    name: 'Orders',
-    component: () => import('../pages/dashboard/OrdersPage.vue'),
-    meta: { layout: 'dashboard', requiresAuth: true },
-  },
+ {
+  path: '/dashboard/orders',
+  name: 'Orders',
+  component: () => import('@/pages/dashboard/Design_OrdersPage.vue'),
+  meta: { layout: 'dashboard', requiresAuth: true },
+},
 
   // ── Preview ───────────────────────────────────────────────────────────────────
   {
