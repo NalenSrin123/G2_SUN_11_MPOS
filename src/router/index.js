@@ -1,81 +1,88 @@
-/*
-|--------------------------------------------------------------------------
-| File: router/index.js
-|--------------------------------------------------------------------------
-|
-| Description:
-| Defines the application routes and navigation behavior using Vue Router.
-|
-| Responsibilities:
-| - Map URL paths to page components
-| - Configure default entry route
-| - Organize public and feature routes
-|
-| Notes:
-| - The root path ("/") currently redirects to "/preview" for demo purposes
-| - Update the root route to Home when moving to production
-|
-*/
-
 import { createRouter, createWebHistory } from 'vue-router'
 
-// Page components
-import Dashboard from '@/pages/dashboard/Dashboard.vue'
-import Login from '@/pages/auth/Login.vue'
-import Register from '@/pages/auth/Register.vue'
-import Preview from '@/pages/preview/Preview.vue'
-import Home from '@/pages/home/Home.vue'
-import NotFound from '@/pages/NotFound.vue'
+// ── Layouts ────────────────────────────────────────────────────────────────────
+// Uncomment and adjust paths to match your actual layout files
+// import DashboardLayout from '@/layouts/DashboardLayout.vue'
+// import AuthLayout from '@/layouts/AuthLayout.vue'
 
-/**
- * Route definitions
- * Each route maps a URL path to a specific page component
- */
+// ── Route definitions ──────────────────────────────────────────────────────────
 const routes = [
-  /**
-   * Default entry route
-   * Redirects "/" to "/preview" to showcase the project structure
-   */
-  { path: '/', redirect: '/preview' },
 
-  /**
-   * Preview page (landing/demo screen)
-   * Displays project structure and navigation examples
-   */
-  { path: '/preview', component: Preview },
+  // ── Auth ─────────────────────────────────────────────────────────────────────
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/pages/auth/Login.vue'),
+    meta: { layout: 'auth', requiresGuest: true },
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: () => import('@/pages/auth/Register.vue'),
+    meta: { layout: 'auth', requiresGuest: true },
+  },
 
-  /**
-   * Main application dashboard
-   * Typically requires authentication (can add guards later)
-   */
-  { path: '/dashboard', component: Dashboard },
+  // ── Home / Landing ────────────────────────────────────────────────────────────
+  {
+    path: '/',
+    name: 'Home',
+    component: () => import('@/pages/home/Home.vue'),
+    meta: { layout: 'default' },
+  },
 
-  /**
-   * Authentication routes
-   */
-  { path: '/login', component: Login },
-  { path: '/register', component: Register },
+  // ── Dashboard ─────────────────────────────────────────────────────────────────
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: () => import('@/pages/dashboard/Dashboard.vue'),
+    meta: { layout: 'dashboard', requiresAuth: true },
+  },
+  {
+    path: '/dashboard/orders',
+    name: 'Orders',
+    component: () => import('../pages/dashboard/OrdersPage.vue'),
+    meta: { layout: 'dashboard', requiresAuth: true },
+  },
 
-  /**
-   * Optional home route (disabled for now)
-   * Uncomment when switching from preview to real landing page
-   */
-  // { path: '/', component: Home },
-  { path: '/home', component: Home },
+  // ── Preview ───────────────────────────────────────────────────────────────────
+  {
+    path: '/preview',
+    name: 'Preview',
+    component: () => import('@/pages/preview/Preview.vue'),
+    meta: { layout: 'default' },
+  },
 
-  /**
-   * Catch-all route
-   * Displays a styled 404 page for unknown paths
-   */
-  { path: '/:pathMatch(.*)*', component: NotFound },
+  // ── 404 ───────────────────────────────────────────────────────────────────────
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('@/pages/NotFound.vue'),
+  },
 ]
 
-/**
- * Router instance configuration
- */
+// ── Create router ──────────────────────────────────────────────────────────────
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) return savedPosition
+    return { top: 0, behavior: 'smooth' }
+  },
+})
+
+// ── Navigation guards ──────────────────────────────────────────────────────────
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('auth_token') // adjust to your auth logic
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    return next({ name: 'Login', query: { redirect: to.fullPath } })
+  }
+
+  if (to.meta.requiresGuest && isAuthenticated) {
+    return next({ name: 'Dashboard' })
+  }
+
+  next()
 })
 
 export default router
