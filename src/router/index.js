@@ -21,11 +21,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 // Page components
 import Dashboard from '@/pages/dashboard/Dashboard.vue'
-import Login from '@/pages/auth/Login.vue'
 import Register from '@/pages/auth/Register.vue'
 import Preview from '@/pages/preview/Preview.vue'
 import Home from '@/pages/home/Home.vue'
 import NotFound from '@/pages/NotFound.vue'
+import ResetPassword from '../pages/auth/ResetPassword.vue'
 
 /**
  * Route definitions
@@ -53,7 +53,6 @@ const routes = [
   /**
    * Authentication routes
    */
-  { path: '/login', component: Login },
   { path: '/register', component: Register },
 
   /**
@@ -68,7 +67,13 @@ const routes = [
    * Displays a styled 404 page for unknown paths
    */
   { path: '/:pathMatch(.*)*', component: NotFound },
+  {
+    path:"/ResetPassword",
+    component:ResetPassword,
+
+  }
 ]
+
 
 /**
  * Router instance configuration
