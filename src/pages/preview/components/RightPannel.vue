@@ -33,6 +33,7 @@ const navLinks = [
   { name: 'login', path: '/login' },
   { name: 'register', path: '/register' },
   { name: 'dashboard', path: '/dashboard' },
+  { name: 'orders', path: '/dashboard/orders' },
   { name: 'home', path: '/home' },
 ]
 </script>
