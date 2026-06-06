@@ -13,6 +13,7 @@ import ResetPassword from '@/pages/auth/ResetPassword.vue'
 import Forgot_Password from '@/pages/auth/Forgot_Password.vue'
 import FromInventory from '@/pages/dashboard/FromInventory.vue'
 import Verify_otp from '@/pages/auth/Verify_OTP.vue'
+import InventoryList from '@/pages/dashboard/InventoryList.vue'
 /**
  * Route definitions
  * Each route maps a URL path to a specific page component
