@@ -35,6 +35,9 @@ const routes = [
     ],
   },
   { path: '/item', redirect: '/dashboard/inventory' },
+  {
+    path: '/inventory_list' , component: InventoryList
+  },
 
   /**
    * Authentication routes
