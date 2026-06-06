@@ -2,12 +2,12 @@
   <div class="page">
     <div class="card">
 
-      <button class="go-back">
+      <RouterLink class="go-back" to="/forgot_password">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
           <path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         Go back
-      </button>
+      </RouterLink>
 
       <h1 class="title">Check your email</h1>
       <p class="subtitle">
@@ -27,12 +27,12 @@
       </div>
 
       <!-- Verify Button -->
-      <button class="btn-verify">Verify</button>
+      <button class="btn-verify" @click="router.push('/reset_password')">Verify</button>
 
       <!-- Resend -->
       <p class="resend-row">
         Didn't receive a code?&nbsp;
-        <span class="resend-link">Resend code</span>
+        <button class="resend-link" type="button">Resend code</button>
       </p>
 
     </div>
@@ -40,6 +40,9 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 </script>
 
 <style scoped>
@@ -95,6 +98,7 @@
   cursor: pointer;
   padding: 0;
   margin-bottom: 28px;
+  text-decoration: none;
 }
 
 /* ── Heading ── */
@@ -171,9 +175,14 @@
   margin: 0;
 }
 .resend-link {
+  background: transparent;
+  border: 0;
   color: #2563eb;
+  font-family: inherit;
+  font-size: inherit;
   font-weight: 600;
   cursor: pointer;
+  padding: 0;
 }
 
 /* ── Mobile ── */

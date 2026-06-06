@@ -2,31 +2,16 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 // Page components
 import Dashboard from '@/pages/dashboard/Dashboard.vue'
+import Sidebar from '@/pages/dashboard/Sidebar.vue'
+import Orders from '@/pages/dashboard/Design_Orders_Page.vue'
 import Register from '@/pages/auth/Register.vue'
+import Login from '@/pages/auth/Login.vue'
 import Preview from '@/pages/preview/Preview.vue'
 import Home from '@/pages/home/Home.vue'
 import NotFound from '@/pages/NotFound.vue'
 import ResetPassword from '@/pages/auth/ResetPassword.vue'
 import Forgot_Password from '@/pages/auth/Forgot_Password.vue'
 import FromInventory from '@/pages/dashboard/FromInventory.vue'
-
-
-
-
-
-
-// Dashboard page components for sidebar navigation
-//=======================================================================================
-import Overview from '@/pages/dashboard/components/Overview.vue'
-import Order from '@/pages/dashboard/components/Order.vue'
-import Product from '@/pages/dashboard/components/Product.vue'
-import Inventory from '@/pages/dashboard/components/Inventory.vue'
-import Setting from '@/pages/dashboard/components/Setting.vue'
-//========================================================================================
-
-
-
-
 import Verify_otp from '@/pages/auth/Verify_OTP.vue'
 /**
  * Route definitions
@@ -40,31 +25,31 @@ const routes = [
   { path: '/preview', component: Preview },
 
   // Dashboard
-  { path: '/dashboard', component: Dashboard },
-
   {
-    path: '/item' , component: FromInventory
+    path: '/dashboard',
+    component: Sidebar,
+    children: [
+      { path: '', name: 'dashboard', component: Dashboard },
+      { path: 'orders', name: 'dashboard-orders', component: Orders },
+      { path: 'inventory', name: 'dashboard-inventory', component: FromInventory },
+    ],
   },
+  { path: '/item', redirect: '/dashboard/inventory' },
 
   /**
    * Authentication routes
    */
+  { path: '/login', component: Login },
   { path: '/register', component: Register },
-  {path : '/verify_otp' ,component:Verify_otp},
+  { path: '/verify_otp', component: Verify_otp },
+  { path: '/forgot_password', component: Forgot_Password },
+  { path: '/reset_password', component: ResetPassword },
 
   // Home
   { path: '/home', component: Home },
-  { path: '/reset_password', component: ResetPassword },
 
   // 404
   { path: '/:pathMatch(.*)*', component: NotFound },
-  {
-    path:"/ResetPassword",
-    component:ResetPassword,
-
-    path: '/forgot_password',
-    component:Forgot_Password
-  }
 ]
 
 

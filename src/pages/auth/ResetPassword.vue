@@ -121,6 +121,10 @@
           </button>
         </div>
       </form>
+      <p class="text-center text-sm text-gray-600">
+        Remember your password?
+        <RouterLink class="font-semibold text-indigo-600 hover:text-indigo-700" to="/login">Login</RouterLink>
+      </p>
       
     </div>
   </div>

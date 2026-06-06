@@ -5,9 +5,7 @@ import { computed } from "vue";
 import {
   LayoutDashboard,
   ShoppingCart,
-  Package,
   Warehouse,
-  Settings,
   Search,
   Bell,
   HelpCircle,
@@ -17,17 +15,15 @@ const route = useRoute();
 
 // Navigation items for the sidebar - maps routes to icons and labels
 const navItems = [
-  { to: "/overview", icon: LayoutDashboard, label: "Overview" },
-  { to: "/orders", icon: ShoppingCart, label: "Orders" },
-  { to: "/products", icon: Package, label: "Products" },
-  { to: "/inventory", icon: Warehouse, label: "Inventory" },
-  { to: "/settings", icon: Settings, label: "Settings" },
+  { to: "/dashboard", icon: LayoutDashboard, label: "Overview" },
+  { to: "/dashboard/orders", icon: ShoppingCart, label: "Orders" },
+  { to: "/dashboard/inventory", icon: Warehouse, label: "Inventory" },
 ];
 
 // Convert to uppercase letter at first letter
 const pageTitle = computed(() => {
-  const path = route.path.replace("/", "") || "overview";
-  return path.charAt(0).toUpperCase() + path.slice(1);
+  const activeItem = navItems.find((item) => item.to === route.path);
+  return activeItem?.label || "Dashboard";
 });
 </script>
 
@@ -36,7 +32,7 @@ const pageTitle = computed(() => {
     <!-- Sidebar Section -->
     <aside class="w-[260px] bg-[#F5F6F8] border-r border-gray-200">
       <div class="px-6 pt-5">
-        <a href="" class="text-2xl font-bold text-blue-600">Culinary Admin</a>
+        <RouterLink to="/dashboard" class="text-2xl font-bold text-blue-600">Culinary Admin</RouterLink>
         <p class="text-xs text-gray-500">Management Portal</p>
       </div>
 
@@ -88,18 +84,18 @@ const pageTitle = computed(() => {
 
         <!-- Right side navbar icons and user profile -->
         <div class="flex items-center gap-5">
-          <a href=""
+          <RouterLink to="/dashboard"
             ><Bell
               :size="18"
               class="text-gray-500 cursor-pointer hover:text-blue-600"
-          /></a>
+          /></RouterLink>
 
-          <a href="">
+          <RouterLink to="/dashboard">
             <HelpCircle
               :size="18"
               class="text-gray-500 cursor-pointer hover:text-blue-600"
             />
-          </a>
+          </RouterLink>
 
           <div class="w-px h-6 bg-gray-300"></div>
 
@@ -110,13 +106,13 @@ const pageTitle = computed(() => {
               <p class="text-xs text-gray-500">Floor Manager</p>
             </div>
 
-            <a href="">
+            <RouterLink to="/login">
               <img
                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8ztrAc-9_3lz9yKylT78HXXyD89WfpMU46w&s"
                 alt="profile"
                 class="w-10 h-10 rounded-full object-cover"
               />
-            </a>
+            </RouterLink>
           </div>
         </div>
       </header>

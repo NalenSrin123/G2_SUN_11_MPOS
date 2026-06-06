@@ -43,10 +43,13 @@
 
 <script setup>      
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const email = ref('')
 
 const handleSubmit = () => {
     console.log('Sending reset link to:', email.value)
+    router.push('/verify_otp')
 }
 </script>
