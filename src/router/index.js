@@ -26,7 +26,7 @@ import Register from '@/pages/auth/Register.vue'
 import Preview from '@/pages/preview/Preview.vue'
 import Home from '@/pages/home/Home.vue'
 import NotFound from '@/pages/NotFound.vue'
-
+import Verify_otp from '@/pages/auth/Verify_OTP.vue'
 /**
  * Route definitions
  * Each route maps a URL path to a specific page component
@@ -55,6 +55,7 @@ const routes = [
    */
   { path: '/login', component: Login },
   { path: '/register', component: Register },
+  {path : '/verify_otp' ,component:Verify_otp},
 
   /**
    * Optional home route (disabled for now)
