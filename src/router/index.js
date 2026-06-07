@@ -68,7 +68,13 @@ const routes = [
    * Displays a styled 404 page for unknown paths
    */
   { path: '/:pathMatch(.*)*', component: NotFound },
+  {
+    path:"/ResetPassword",
+    component:ResetPassword,
+
+  }
 ]
+
 
 /**
  * Router instance configuration

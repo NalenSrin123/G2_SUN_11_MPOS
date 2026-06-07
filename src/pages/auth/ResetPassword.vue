@@ -1,4 +1,3 @@
-
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-md border border-gray-100">
@@ -20,44 +19,84 @@
           {{ successMessage }}
         </div>
 
-        <div class="space-y-4 rounded-md shadow-sm">
+        <div class="space-y-4 rounded-md">
+          <!-- New Password Input -->
           <div>
             <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
               New Password
             </label>
-            <input
-              id="password"
-              v-model="password"
-              type="password"
-              required
-              class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              placeholder="••••••••"
-              :disabled="isSubmitting"
-            />
+            <div class="relative">
+              <input
+                id="password"
+                v-model="password"
+                :type="showPassword ? 'text' : 'password'"
+                required
+                class="appearance-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="••••••••"
+                :disabled="isSubmitting"
+              />
+              <button 
+                type="button"
+                @click="showPassword = !showPassword"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+              >
+                <!-- Eye Open Icon -->
+                <svg v-if="showPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+                <!-- Eye Closed (Hidden) Icon -->
+                <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 1-4.243-4.243m4.242 4.242L9.88 9.88" />
+                </svg>
+              </button>
+            </div>
           </div>
 
+          <!-- Confirm Password Input -->
           <div>
             <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">
               Confirm New Password
             </label>
-            <input
-              id="confirm-password"
-              v-model="confirmPassword"
-              type="password"
-              required
-              class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              placeholder="••••••••"
-              :disabled="isSubmitting"
-            />
+            <div class="relative">
+              <input
+                id="confirm-password"
+                v-model="confirmPassword"
+                :type="showConfirmPassword ? 'text' : 'password'"
+                required
+                class="appearance-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="••••••••"
+                :disabled="isSubmitting"
+              />
+              <button 
+                type="button"
+                @click="showConfirmPassword = !showConfirmPassword"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+              >
+                <!-- Eye Open Icon -->
+                <svg v-if="showConfirmPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+                <!-- Eye Closed (Hidden) Icon -->
+                <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 1-4.243-4.243m4.242 4.242L9.88 9.88" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
+        <!-- Password Checklist Requirements -->
         <div class="text-xs text-gray-500 flex flex-col space-y-1">
-          <span :class="isPasswordValid ? 'text-green-600' : 'text-gray-500'">
-            ✓ At least 8 characters
+          <span :class="isPasswordValid ? 'text-green-600 font-medium' : 'text-gray-500'">
+            {{ isPasswordValid ? '✓' : '•' }} At least 8 characters
           </span>
-          <span :class="doPasswordsMatch && confirmPassword ? 'text-green-600' : 'text-gray-500'">
-            ✓ Passwords match
+          <span :class="hasSpecialChar ? 'text-green-600 font-medium' : 'text-gray-500'">
+            {{ hasSpecialChar ? '✓' : '•' }} At least 1 special character
+          </span>
+          <span :class="doPasswordsMatch && confirmPassword ? 'text-green-600 font-medium' : 'text-gray-500'">
+            {{ doPasswordsMatch && confirmPassword ? '✓' : '•' }} Passwords match
           </span>
         </div>
 
@@ -96,8 +135,18 @@ const isSubmitting = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
 
-// Simple validation: Password must be at least 8 characters
+// Eye toggle visibility states
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
+
+// Validations
 const isPasswordValid = computed(() => password.value.length >= 8)
+
+// Check for at least one special character using Regex
+const hasSpecialChar = computed(() => {
+  const specialCharRegex = /[@$!%*?&]/
+  return specialCharRegex.test(password.value)
+})
 
 // Check if both passwords match
 const doPasswordsMatch = computed(() => password.value === confirmPassword.value)
@@ -114,6 +163,11 @@ const handleResetPassword = async () => {
     return
   }
 
+  if (!hasSpecialChar.value) {
+    errorMessage.value = 'Password must contain at least one special character.'
+    return
+  }
+
   if (!doPasswordsMatch.value) {
     errorMessage.value = 'Passwords do not match.'
     return
@@ -122,7 +176,7 @@ const handleResetPassword = async () => {
   try {
     isSubmitting.value = true
     
-    // Simulate API Call (Replace with your actual Axios/Fetch request)
+    // Simulate API Call
     await new Promise((resolve) => setTimeout(resolve, 2000))
     
     successMessage.value = 'Your password has been successfully reset!'
@@ -135,4 +189,4 @@ const handleResetPassword = async () => {
     isSubmitting.value = false
   }
 }
-</script> 
+</script>
