@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import Forgot_Password from './pages/auth/Forgot_Password.vue';
+
+</script>
+
 /*
 |--------------------------------------------------------------------------
 | File: App.vue

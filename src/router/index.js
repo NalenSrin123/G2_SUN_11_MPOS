@@ -26,6 +26,7 @@ import Preview from '@/pages/preview/Preview.vue'
 import Home from '@/pages/home/Home.vue'
 import NotFound from '@/pages/NotFound.vue'
 import ResetPassword from '@/pages/auth/ResetPassword.vue'
+import Forgot_Password from '@/pages/auth/Forgot_Password.vue'
 
 /**
  * Route definitions
@@ -72,6 +73,8 @@ const routes = [
     path:"/ResetPassword",
     component:ResetPassword,
 
+    path: '/forgot_password',
+    component:Forgot_Password
   }
 ]
 
