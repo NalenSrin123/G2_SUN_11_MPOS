@@ -27,6 +27,8 @@ import Home from '@/pages/home/Home.vue'
 import NotFound from '@/pages/NotFound.vue'
 import ResetPassword from '@/pages/auth/ResetPassword.vue'
 import Forgot_Password from '@/pages/auth/Forgot_Password.vue'
+import FromInventory from '@/pages/dashboard/FromInventory.vue'
+
 
 /**
  * Route definitions
@@ -50,6 +52,10 @@ const routes = [
    * Typically requires authentication (can add guards later)
    */
   { path: '/dashboard', component: Dashboard },
+
+  {
+    path: '/item' , component: FromInventory
+  },
 
   /**
    * Authentication routes
