@@ -20,8 +20,8 @@ import FromInventory from '@/pages/dashboard/FromInventory.vue'
 import Overview from '@/pages/dashboard/components/Overview.vue'
 import Order from '@/pages/dashboard/components/Order.vue'
 import Product from '@/pages/dashboard/components/Product.vue'
-import Inventory from '@/pages/dashboard/components/Inventory.vue'
 import Setting from '@/pages/dashboard/components/Setting.vue'
+import InventoryList from "../pages/dashboard/InventoryList.vue";
 //========================================================================================
 
 
@@ -44,6 +44,9 @@ const routes = [
 
   {
     path: '/item' , component: FromInventory
+  },
+  {
+    path: '/inventory_list' , component: InventoryList
   },
 
   /**
