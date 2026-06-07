@@ -30,6 +30,22 @@ import Forgot_Password from '@/pages/auth/Forgot_Password.vue'
 import FromInventory from '@/pages/dashboard/FromInventory.vue'
 
 
+
+
+
+
+// Dashboard page components for sidebar navigation
+//=======================================================================================
+import Overview from '@/pages/dashboard/components/Overview.vue'
+import Order from '@/pages/dashboard/components/Order.vue'
+import Product from '@/pages/dashboard/components/Product.vue'
+import Inventory from '@/pages/dashboard/components/Inventory.vue'
+import Setting from '@/pages/dashboard/components/Setting.vue'
+//========================================================================================
+
+
+
+
 /**
  * Route definitions
  * Each route maps a URL path to a specific page component

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Forgot_Password from './pages/auth/Forgot_Password.vue';
 
 </script>
 
@@ -25,5 +24,6 @@ import Forgot_Password from './pages/auth/Forgot_Password.vue';
 
 <template>
   <!-- Router outlet: renders matched route component -->
+  
   <RouterView />
 </template>
