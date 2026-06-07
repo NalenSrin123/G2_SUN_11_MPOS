@@ -27,6 +27,11 @@ import Setting from '@/pages/dashboard/components/Setting.vue'
 
 
 
+import Verify_otp from '@/pages/auth/Verify_OTP.vue'
+/**
+ * Route definitions
+ * Each route maps a URL path to a specific page component
+ */
 const routes = [
   // Default route
   { path: '/', redirect: '/preview' },
@@ -45,6 +50,7 @@ const routes = [
    * Authentication routes
    */
   { path: '/register', component: Register },
+  {path : '/verify_otp' ,component:Verify_otp},
 
   // Home
   { path: '/home', component: Home },
