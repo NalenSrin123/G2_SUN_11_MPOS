@@ -27,6 +27,7 @@ import Preview from '@/pages/preview/Preview.vue'
 import Home from '@/pages/home/Home.vue'
 import NotFound from '@/pages/NotFound.vue'
 import Verify_otp from '@/pages/auth/Verify_OTP.vue'
+import Design_Menu_Category from '../pages/dashboard/Design_Menu_Category.vue'
 /**
  * Route definitions
  * Each route maps a URL path to a specific page component
@@ -49,6 +50,7 @@ const routes = [
    * Typically requires authentication (can add guards later)
    */
   { path: '/dashboard', component: Dashboard },
+  {path:'/menu_category',component:Design_Menu_Category},
 
   /**
    * Authentication routes
