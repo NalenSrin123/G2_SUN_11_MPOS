@@ -14,6 +14,7 @@ import Forgot_Password from '@/pages/auth/Forgot_Password.vue'
 import FromInventory from '@/pages/dashboard/FromInventory.vue'
 import Verify_otp from '@/pages/auth/Verify_OTP.vue'
 import InventoryList from '@/pages/dashboard/InventoryList.vue'
+import Design_Product_List from '../pages/dashboard/Design_Product_List.vue'
 /**
  * Route definitions
  * Each route maps a URL path to a specific page component
@@ -38,6 +39,9 @@ const routes = [
   { path: '/item', redirect: '/dashboard/inventory' },
   {
     path: '/inventory_list' , component: InventoryList
+  },
+  {
+    path: '/productlist',component: Design_Product_List
   },
 
   /**
