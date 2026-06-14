@@ -16,6 +16,7 @@ import Verify_otp from '@/pages/auth/Verify_OTP.vue'
 import InventoryList from '@/pages/dashboard/InventoryList.vue'
 import AddProduct from '../pages/dashboard/AddProduct.vue'
 import DesignPageCreateTable from '../pages/dashboard/DesignPageCreateTable.vue'
+import UserSetting from '../pages/dashboard/setting/UserSetting.vue'
 /**
  * Route definitions
  * Each route maps a URL path to a specific page component
@@ -47,6 +48,7 @@ const routes = [
   {
     path:'/create_table',
     component:DesignPageCreateTable,
+    path: '/setting' , component: UserSetting
   },
 
   /**
