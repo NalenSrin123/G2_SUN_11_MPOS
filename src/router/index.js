@@ -20,6 +20,8 @@ import UserSetting from '../pages/dashboard/setting/UserSetting.vue'
 import Design_Product_List from '../pages/dashboard/Design_Product_List.vue'
 import Design_Menu_Category from '../pages/dashboard/Design_Menu_Category.vue'
 import Update_payment from '../pages/dashboard/update_payment.vue'
+import TableManagement from '@/pages/dashboard/teble_management.vue'
+
 /**
  * Route definitions
  * Each route maps a URL path to a specific page component
@@ -72,6 +74,12 @@ const routes = [
   { path: '/reset_password', component: ResetPassword },
 
   // Home
+  { path: '/table_management', component: TableManagement },
+  /**
+   * Optional home route (disabled for now)
+   * Uncomment when switching from preview to real landing page
+   */
+  // { path: '/', component: Home },
   { path: '/home', component: Home },
 
   // 404
