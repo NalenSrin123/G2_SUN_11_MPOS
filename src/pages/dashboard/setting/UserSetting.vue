@@ -104,7 +104,9 @@
                         </div>
                         <div class="w-full mt-3 ">
                             <div class="flex items-center gap-2">
-                                <span>T</span>
+                                <span class="text-blue-500">
+                                    <i class="fa-regular fa-clock"></i>
+                                </span>
                                 <h1 class="text-sm text-blue-500 font-semibold">OPERATING HOURS</h1>
                             </div>
                             <hr class="mt-1 h-0.5 bg-zinc-300 text-zinc-200">
@@ -114,7 +116,9 @@
                                     <button class="border py-1 px-2 w-[45%]  text-sm md:text-md text-black rounded border-zinc-400 bg-zinc-200">10:10Am</button>
                                     to
                                     <button class="border py-1 px-1 w-[40%]  text-sm md:text-md text-black rounded border-zinc-400 bg-zinc-200">10:10Pm</button> 
-                                    <span>x</span>    
+                                    <span class="text-sm">
+                                        <i class="fa-regular fa-clock"></i>
+                                    </span>    
                                 </div>
                                 <div class="mt-2 text-zinc-400">
                                     <h1 class="text-blue-400 font-semibold">Saturday</h1>
