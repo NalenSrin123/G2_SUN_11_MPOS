@@ -21,11 +21,11 @@ import Design_Product_List from '../pages/dashboard/Design_Product_List.vue'
 import Design_Menu_Category from '../pages/dashboard/Design_Menu_Category.vue'
 import Update_payment from '../pages/dashboard/update_payment.vue'
 import TableManagement from '@/pages/dashboard/teble_management.vue'
+import Design_New_Category from '@/pages/dashboard/categories/Design_New_Category.vue'
 
-/**
- * Route definitions
- * Each route maps a URL path to a specific page component
- */
+function isAuthenticated() {
+  return !!localStorage.getItem('auth_token')
+}
 const routes = [
   // Default route
   { path: '/', redirect: '/preview' },
@@ -64,10 +64,13 @@ const routes = [
     path: '/update_payment' , component: Update_payment
   },
 
-  /**
-   * Authentication routes
-   */
-  { path: '/login', component: Login },
+  {
+    path: '/dashboard/categories/new',
+    component: Design_New_Category,
+    meta: { requiresAuth: false }, 
+  },
+
+  { path: '/login',    component: Login },
   { path: '/register', component: Register },
   { path: '/verify_otp', component: Verify_otp },
   { path: '/forgot_password', component: Forgot_Password },
