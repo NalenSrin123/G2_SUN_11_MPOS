@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   ShoppingCart,
   Warehouse,
+  TableProperties, // Imported for the tables item
   Search,
   Bell,
   HelpCircle,
@@ -18,6 +19,7 @@ const navItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Overview" },
   { to: "/dashboard/orders", icon: ShoppingCart, label: "Orders" },
   { to: "/dashboard/inventory", icon: Warehouse, label: "Inventory" },
+  { to: "/dashboard/tables", icon: TableProperties, label: "Tables" }, // Added tables here
 ];
 
 // Convert to uppercase letter at first letter
@@ -29,14 +31,12 @@ const pageTitle = computed(() => {
 
 <template>
   <div class="flex min-h-screen bg-gray-50">
-    <!-- Sidebar Section -->
     <aside class="w-[260px] bg-[#F5F6F8] border-r border-gray-200">
       <div class="px-6 pt-5">
         <RouterLink to="/dashboard" class="text-2xl font-bold text-blue-600">Culinary Admin</RouterLink>
         <p class="text-xs text-gray-500">Management Portal</p>
       </div>
 
-      <!-- Navigation Links -->
       <nav class="mt-10 px-3">
         <RouterLink
           v-for="item in navItems"
@@ -55,19 +55,15 @@ const pageTitle = computed(() => {
       </nav>
     </aside>
 
-    <!-- Main Content -->
     <div class="flex-1 flex flex-col">
-      <!-- Header/Navbar -->
       <header
         class="h-[72px] bg-white border-b border-gray-200 flex items-center justify-between px-6"
       >
         <div class="flex items-center gap-6">
-          <!-- Dynamic page title based on current route path -->
           <h2 class="text-2xl font-semibold text-blue-600">
             {{ pageTitle }}
           </h2>
 
-          <!-- Search Bar -->
           <div class="relative">
             <Search
               class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -82,7 +78,6 @@ const pageTitle = computed(() => {
           </div>
         </div>
 
-        <!-- Right side navbar icons and user profile -->
         <div class="flex items-center gap-5">
           <RouterLink to="/dashboard"
             ><Bell
@@ -99,7 +94,6 @@ const pageTitle = computed(() => {
 
           <div class="w-px h-6 bg-gray-300"></div>
 
-          <!-- User Info -->
           <div class="flex items-center gap-3">
             <div class="text-right">
               <p class="text-sm font-medium">Alex Rivera</p>
@@ -117,7 +111,6 @@ const pageTitle = computed(() => {
         </div>
       </header>
 
-      <!-- Page Content - This renders the current route's component -->
       <main class="flex-1 p-6">
         <RouterView />
       </main>
