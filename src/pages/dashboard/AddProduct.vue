@@ -1,110 +1,78 @@
 <template>
-  <div class="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8 py-6 font-sans">
-    <!-- Breadcrumb -->
-    <nav class="flex items-center gap-2 text-sm text-gray-400 mb-4">
-      <span class="hover:text-[#1060FE] cursor-pointer">Inventory</span>
-      <span>›</span>
-      <span class="hover:text-[#1060FE] cursor-pointer">Products</span>
-      <span>›</span>
-      <span class="text-gray-700 font-medium">Add New</span>
-    </nav>
-
+  <div class="min-h-screen px-4 sm:px-6 lg:px-10 py-6 sm:py-8 font-sans">
+    <button
+      @click="$emit('close')"
+      class="flex items-center gap-1.5 text-[#1060FE] text-sm font-medium hover:underline whitespace-nowrap shrink-0"
+    >
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        viewBox="0 0 24 24"
+      >
+        <path d="M19 12H5M5 12l7-7M5 12l7 7" />
+      </svg>
+      Back to List
+    </button>
     <!-- Header -->
     <div class="mb-7">
-      <!-- Row 1: Back + Title -->
-      <div class="flex items-center gap-3 mb-3">
-        <button
-          @click="$emit('back')"
-          class="flex items-center gap-1.5 text-[#1060FE] text-sm font-medium hover:underline whitespace-nowrap shrink-0"
-        >
-          <svg
-            class="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            viewBox="0 0 24 24"
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-1">
+        <div class="flex items-center gap-3 min-w-0">
+          <!-- <button
+            @click="$emit('close')"
+            class="flex items-center gap-1.5 text-[#1060FE] text-sm font-medium hover:underline whitespace-nowrap shrink-0"
           >
-            <path d="M19 12H5M5 12l7-7M5 12l7 7" />
-          </svg>
-          Back to List
-        </button>
-        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 truncate">
-          Add New Product
-        </h1>
-      </div>
-      <!-- Row 2: Actions (full-width on mobile, right-aligned) -->
-      <div class="flex gap-2 sm:hidden">
-        <button
-          @click="handleCancel"
-          class="flex-1 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:border-[#1060FE] hover:text-[#1060FE] transition-colors"
-        >
-          Cancel
-        </button>
-        <button
-          @click="handleSave"
-          :disabled="saving"
-          class="flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold text-white bg-[#1060FE] rounded-lg hover:bg-blue-700 disabled:opacity-60 transition-colors"
-        >
-          <svg
-            v-if="saving"
-            class="w-4 h-4 animate-spin"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
+            <svg
+              class="w-4 h-4"
+              fill="none"
               stroke="currentColor"
-              stroke-width="4"
-            />
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v8H4z"
-            />
-          </svg>
-          {{ saving ? "Saving..." : "Save Product" }}
-        </button>
-      </div>
-      <!-- Desktop actions: inline with title row (override) -->
-      <div
-        class="hidden sm:flex sm:absolute sm:top-6 sm:right-6 lg:right-8 gap-2"
-      >
-        <button
-          @click="handleCancel"
-          class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:border-[#1060FE] hover:text-[#1060FE] transition-colors"
-        >
-          Cancel
-        </button>
-        <button
-          @click="handleSave"
-          :disabled="saving"
-          class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-[#1060FE] rounded-lg hover:bg-blue-700 disabled:opacity-60 transition-colors whitespace-nowrap"
-        >
-          <svg
-            v-if="saving"
-            class="w-4 h-4 animate-spin"
-            fill="none"
-            viewBox="0 0 24 24"
+              stroke-width="2.5"
+              viewBox="0 0 24 24"
+            >
+              <path d="M19 12H5M5 12l7-7M5 12l7 7" />
+            </svg>
+            Back to List
+          </button> -->
+          <h1 class="text-xl sm:text-2xl font-bold text-gray-900 truncate">
+            Add New Product
+          </h1>
+        </div>
+        <div class="flex gap-2 shrink-0">
+          <button
+            @click="handleCancel"
+            class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:border-[#1060FE] hover:text-[#1060FE] transition-colors"
           >
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-            />
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v8H4z"
-            />
-          </svg>
-          {{ saving ? "Saving..." : "Save Product" }}
-        </button>
+            Cancel
+          </button>
+          <button
+            @click="handleSave"
+            :disabled="saving"
+            class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-[#1060FE] rounded-lg hover:bg-blue-700 disabled:opacity-60 transition-colors whitespace-nowrap"
+          >
+            <svg
+              v-if="saving"
+              class="w-4 h-4 animate-spin"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              />
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8H4z"
+              />
+            </svg>
+            {{ saving ? "Saving..." : "Save Product" }}
+          </button>
+        </div>
       </div>
     </div>
 
@@ -373,7 +341,7 @@ import { ref, reactive } from "vue";
 
 export default {
   name: "AddNewProduct",
-  emits: ["back", "save"],
+  emits: ["close", "add"],
   setup(props, { emit }) {
     const saving = ref(false);
     const isDragging = ref(false);
@@ -413,7 +381,7 @@ export default {
       saving.value = true;
       await new Promise((r) => setTimeout(r, 1200));
       saving.value = false;
-      emit("save", { ...form, image: imagePreview.value });
+      emit("add", { ...form, image: imagePreview.value });
     }
 
     function handleCancel() {
@@ -428,6 +396,7 @@ export default {
       });
       imagePreview.value = null;
       Object.assign(errors, { name: "", category: "", price: "" });
+      emit("close");
     }
 
     function handleFile(e) {

@@ -10,6 +10,10 @@ import {
   Search,
   Bell,
   HelpCircle,
+  PackageSearch,
+  Boxes,
+  CreditCard,
+  Settings,
 } from "lucide-vue-next";
 
 const route = useRoute();
@@ -19,7 +23,11 @@ const navItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Overview" },
   { to: "/dashboard/orders", icon: ShoppingCart, label: "Orders" },
   { to: "/dashboard/inventory", icon: Warehouse, label: "Inventory" },
-  { to: "/dashboard/tables", icon: TableProperties, label: "Tables" }, // Added tables here
+  { to: "/dashboard/table", icon: TableProperties, label: "Tables" }, 
+  { to: "/dashboard/product",icon: PackageSearch , label: "Products" },
+  { to: "/dashboard/category", icon: Boxes, label: "Categories"},
+  { to: "/dashboard/payment", icon: CreditCard ,label: "Payment"},
+  { to: "/dashboard/setting",icon: Settings, label: "Setting" }
 ];
 
 // Convert to uppercase letter at first letter

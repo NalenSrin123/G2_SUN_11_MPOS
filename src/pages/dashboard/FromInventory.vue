@@ -1,12 +1,12 @@
 <template>
   <div
-    class="min-h-screen bg-slate-100 px-4 sm:px-6 lg:px-10 py-6 sm:py-8 font-sans"
+    class="min-h-screen px-4 sm:px-6 lg:px-10 py-6 sm:py-8 font-sans"
   >
     <!-- Back Nav -->
     <nav class="mb-5">
       <a
         href="#"
-        @click.prevent="$emit('back')"
+        @click.prevent="handleCancel"
         class="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest text-blue-500 uppercase hover:opacity-60 transition-opacity"
       >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -389,7 +389,9 @@
 <script>
 export default {
   name: "NewInventoryItem",
-  emits: ["back", "save"],
+  // Emits "close" (cancel / back) and "add" (new item payload),
+  // matching what InventoryList.vue listens for: @close, @add
+  emits: ["close", "add"],
 
   data() {
     return {
@@ -455,7 +457,7 @@ export default {
     removePhoto() {
       this.previewUrl = null;
       this.selectedFile = null;
-      this.$refs.fileInput.value = "";
+      if (this.$refs.fileInput) this.$refs.fileInput.value = "";
     },
     validate() {
       this.errors = {};
@@ -464,15 +466,55 @@ export default {
       return Object.keys(this.errors).length === 0;
     },
     async handleSave() {
-      if (!this.validate()) return;
+      if (!this.validate()) {
+        this.showToast("Please fix the errors before saving.", "error");
+        return;
+      }
       this.saving = true;
       await new Promise((r) => setTimeout(r, 900));
       this.saving = false;
-      this.$emit("save", { ...this.form, photo: this.selectedFile });
+
+      // Map this form's fields to the shape InventoryList.vue's
+      // handleAddItem() expects (name, sku, category, currentStock, ...)
+      const payload = this.toInventoryItem();
+
       this.showToast("Item saved successfully!", "success");
+
+      // Brief delay so the success toast is visible before closing the form
+      setTimeout(() => {
+        this.$emit("add", payload);
+      }, 400);
     },
     handleCancel() {
-      this.$emit("back");
+      this.$emit("close");
+    },
+    // Converts this form's data into the inventory row shape used by InventoryList.vue
+    toInventoryItem() {
+      const stock =
+        this.form.initialStock === "" ? 0 : parseFloat(this.form.initialStock);
+      const minAlert =
+        this.form.minAlert === "" ? 0 : parseFloat(this.form.minAlert);
+      const unitPrice =
+        this.form.unitPrice === "" ? 0 : parseFloat(this.form.unitPrice);
+
+      return {
+        name: this.form.itemName,
+        sku: this.form.sku,
+        category: this.form.category,
+        currentStock: `${stock} ${this.form.unit}`,
+        minStock: `${minAlert} ${this.form.unit}`,
+        unitPrice,
+        // Derive a health status from stock vs. min alert threshold
+        health:
+          minAlert > 0 && stock <= minAlert
+            ? "CRITICAL"
+            : minAlert > 0 && stock <= minAlert * 1.5
+              ? "WARNING"
+              : "HEALTHY",
+        photo: this.selectedFile,
+        supplier: this.form.supplier,
+        description: this.form.description,
+      };
     },
     showToast(message, type = "success") {
       this.toast = { show: true, message, type };

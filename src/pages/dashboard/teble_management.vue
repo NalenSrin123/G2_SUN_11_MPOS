@@ -1,5 +1,10 @@
 <template>
-  <div class="tm-root">
+  <DesignPageCreateTable
+    v-if="showForm"
+    @back="showForm = false"
+    @submit="handleCreateTable"
+  />
+  <div v-else class="tm-root">
     <!-- Header -->
     <div class="tm-header">
       <div class="tm-title-block">
@@ -8,11 +13,10 @@
           Real-time table status and reservation overview.
         </p>
       </div>
-      <button class="tm-create-btn">
+      <button @click="showForm = true" class="tm-create-btn">
         <span class="btn-icon">⊕</span> Create Table
       </button>
     </div>
-
     <!-- Stat Cards -->
     <div class="tm-stats">
       <div class="stat-card" v-for="stat in stats" :key="stat.label">
@@ -34,7 +38,8 @@
           v-for="tab in tabs"
           :key="tab"
           :class="['tm-tab', { active: activeTab === tab }]"
-          @click="activeTab = tab">
+          @click="activeTab = tab"
+        >
           {{ tab }}
         </button>
       </div>
@@ -70,42 +75,43 @@
               <span class="table-id">{{ row.id }}</span>
               <span class="table-name">{{ row.name }}</span>
             </td>
-            <td class="td-cap" data-label="Capacity">{{ row.capacity }} Seats</td>
+            <td class="td-cap" data-label="Capacity">
+              {{ row.capacity }} Seats
+            </td>
             <td data-label="Status">
               <span :class="['status-badge', row.status.toLowerCase()]">{{
                 row.status
               }}</span>
             </td>
             <td class="td-loc" data-label="Location">
-              <!-- Wrapped in loc-content so flex applies to the value, not the cell -->
               <span class="loc-content">
                 <span class="loc-icon">
-                  <!-- Indoor -->
                   <svg
                     v-if="row.location === 'Indoor'"
                     xmlns="http://www.w3.org/2000/svg"
                     height="20"
                     width="20"
                     viewBox="0 0 24 24"
-                    fill="currentColor">
+                    fill="currentColor"
+                  >
                     <path d="M12 3l9 7h-3v9h-5v-6H11v6H6v-9H3l9-7z" />
                   </svg>
-                  <!-- Outdoor -->
                   <svg
                     v-else
                     xmlns="http://www.w3.org/2000/svg"
                     height="20px"
                     viewBox="0 -960 960 960"
                     width="20px"
-                    fill="#000000">
+                    fill="#000000"
+                  >
                     <path
-                      d="M480-144v-432q-10.69-10.8-26.35-17.4Q438-600 421-600t-33.03 6.3Q371.95-587.4 361-576h-96q5-101 77-170.5T516-816q102 0 174 69.5T767-576h-96q-10.95-11.4-26.97-17.7Q628-600 611-600t-32.65 6.6Q562.69-586.8 552-576v432h-72Zm24-504h25q18-11 39.07-17.5T612-672q14.09 0 27.55 2.5Q653-667 666-662q-24-37-63-59.5T516-744q-48 0-87 22.5T366-662q13-5 26.45-7.5Q405.91-672 420-672q23.21 0 44.6 6.5Q486-659 504-648Zm120 504v-216h216v216h-72v-144h-72v144h-72Zm-444 0v-98q-17.18-4.34-28.64-16.49Q139.91-270.64 138-288L96-624h25q20.32 0 35.77 13.67Q172.23-596.65 174-577l27 217h135q33 0 52.5 19.5T408-288v48h-48v96h-48v-96h-84v96h-48Zm336-504Z" />
+                      d="M480-144v-432q-10.69-10.8-26.35-17.4Q438-600 421-600t-33.03 6.3Q371.95-587.4 361-576h-96q5-101 77-170.5T516-816q102 0 174 69.5T767-576h-96q-10.95-11.4-26.97-17.7Q628-600 611-600t-32.65 6.6Q562.69-586.8 552-576v432h-72Zm24-504h25q18-11 39.07-17.5T612-672q14.09 0 27.55 2.5Q653-667 666-662q-24-37-63-59.5T516-744q-48 0-87 22.5T366-662q13-5 26.45-7.5Q405.91-672 420-672q23.21 0 44.6 6.5Q486-659 504-648Zm120 504v-216h216v216h-72v-144h-72v144h-72Zm-444 0v-98q-17.18-4.34-28.64-16.49Q139.91-270.64 138-288L96-624h25q20.32 0 35.77 13.67Q172.23-596.65 174-577l27 217h135q33 0 52.5 19.5T408-288v48h-48v96h-48v-96h-84v96h-48Zm336-504Z"
+                    />
                   </svg>
                 </span>
                 {{ row.location }}
               </span>
             </td>
-
             <td class="td-actions">
               <button class="action-btn" title="Edit">
                 <svg
@@ -113,9 +119,11 @@
                   height="20px"
                   viewBox="0 -960 960 960"
                   width="20px"
-                  fill="#000000">
+                  fill="#000000"
+                >
                   <path
-                    d="M216-216h51l375-375-51-51-375 375v51Zm-72 72v-153l498-498q11-11 23.84-16 12.83-5 27-5 14.16 0 27.16 5t24 16l51 51q11 11 16 24t5 26.54q0 14.45-5.02 27.54T795-642L297-144H144Zm600-549-51-51 51 51Zm-127.95 76.95L591-642l51 51-25.95-25.05Z" />
+                    d="M216-216h51l375-375-51-51-375 375v51Zm-72 72v-153l498-498q11-11 23.84-16 12.83-5 27-5 14.16 0 27.16 5t24 16l51 51q11 11 16 24t5 26.54q0 14.45-5.02 27.54T795-642L297-144H144Zm600-549-51-51 51 51Zm-127.95 76.95L591-642l51 51-25.95-25.05Z"
+                  />
                 </svg>
               </button>
               <button class="action-btn" title="More">⋮</button>
@@ -136,37 +144,136 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import DesignPageCreateTable from "./DesignPageCreateTable.vue";
 
 const activeTab = ref("All");
 const tabs = ["All", "Indoor", "Outdoor"];
 const page = ref(1);
 const perPage = 10;
 
+const showForm = ref(false);
+
 const allTables = ref([
-  { id: "T01", name: "Front Window",   capacity: 4,  status: "Available", location: "Indoor"  },
-  { id: "T02", name: "Main Floor",     capacity: 2,  status: "Occupied",  location: "Indoor"  },
-  { id: "T12", name: "Garden Terrace", capacity: 6,  status: "Reserved",  location: "Outdoor" },
-  { id: "T04", name: "Bar Side",       capacity: 2,  status: "Available", location: "Indoor"  },
-  { id: "T20", name: "Corner Booth",   capacity: 8,  status: "Occupied",  location: "Indoor"  },
-  { id: "T15", name: "Patio Edge",     capacity: 4,  status: "Available", location: "Outdoor" },
-  { id: "T07", name: "Mezzanine",      capacity: 6,  status: "Reserved",  location: "Indoor"  },
-  { id: "T09", name: "Rooftop Deck",   capacity: 10, status: "Available", location: "Outdoor" },
-  { id: "T03", name: "Lounge Left",    capacity: 4,  status: "Occupied",  location: "Indoor"  },
-  { id: "T11", name: "Courtyard",      capacity: 6,  status: "Available", location: "Outdoor" },
-  { id: "T17", name: "Fireplace Nook", capacity: 2,  status: "Reserved",  location: "Indoor"  },
-  { id: "T22", name: "Garden Side",    capacity: 4,  status: "Available", location: "Outdoor" },
+  {
+    id: "T01",
+    name: "Front Window",
+    capacity: 4,
+    status: "Available",
+    location: "Indoor",
+  },
+  {
+    id: "T02",
+    name: "Main Floor",
+    capacity: 2,
+    status: "Occupied",
+    location: "Indoor",
+  },
+  {
+    id: "T12",
+    name: "Garden Terrace",
+    capacity: 6,
+    status: "Reserved",
+    location: "Outdoor",
+  },
+  {
+    id: "T04",
+    name: "Bar Side",
+    capacity: 2,
+    status: "Available",
+    location: "Indoor",
+  },
+  {
+    id: "T20",
+    name: "Corner Booth",
+    capacity: 8,
+    status: "Occupied",
+    location: "Indoor",
+  },
+  {
+    id: "T15",
+    name: "Patio Edge",
+    capacity: 4,
+    status: "Available",
+    location: "Outdoor",
+  },
+  {
+    id: "T07",
+    name: "Mezzanine",
+    capacity: 6,
+    status: "Reserved",
+    location: "Indoor",
+  },
+  {
+    id: "T09",
+    name: "Rooftop Deck",
+    capacity: 10,
+    status: "Available",
+    location: "Outdoor",
+  },
+  {
+    id: "T03",
+    name: "Lounge Left",
+    capacity: 4,
+    status: "Occupied",
+    location: "Indoor",
+  },
+  {
+    id: "T11",
+    name: "Courtyard",
+    capacity: 6,
+    status: "Available",
+    location: "Outdoor",
+  },
+  {
+    id: "T17",
+    name: "Fireplace Nook",
+    capacity: 2,
+    status: "Reserved",
+    location: "Indoor",
+  },
+  {
+    id: "T22",
+    name: "Garden Side",
+    capacity: 4,
+    status: "Available",
+    location: "Outdoor",
+  },
 ]);
 
 const stats = [
-  { label: "TOTAL CAPACITY", value: "142", badge: "+8",  badgeType: "up",   sub: ""        },
-  { label: "AVAILABLE NOW",  value: "12",  badge: null,  badgeType: "",     sub: "Tables"  },
-  { label: "OCCUPANCY RATE", value: "84%", badge: "~2%", badgeType: "down", sub: ""        },
-  { label: "RESERVED TODAY", value: "28",  badge: null,  badgeType: "",     sub: "Bookings"},
+  {
+    label: "TOTAL CAPACITY",
+    value: "142",
+    badge: "+8",
+    badgeType: "up",
+    sub: "",
+  },
+  {
+    label: "AVAILABLE NOW",
+    value: "12",
+    badge: null,
+    badgeType: "",
+    sub: "Tables",
+  },
+  {
+    label: "OCCUPANCY RATE",
+    value: "84%",
+    badge: "-2%",
+    badgeType: "down",
+    sub: "",
+  },
+  {
+    label: "RESERVED TODAY",
+    value: "28",
+    badge: null,
+    badgeType: "",
+    sub: "Bookings",
+  },
 ];
 
 const filteredTables = computed(() => {
   if (activeTab.value === "All") return allTables.value;
-  return allTables.value.filter(t => t.location === activeTab.value);
+  return allTables.value.filter((t) => t.location === activeTab.value);
 });
 
 const totalPages = computed(() =>
@@ -183,9 +290,35 @@ const showingRange = computed(() => {
   return `${start}–${end}`;
 });
 
-function prevPage() { if (page.value > 1) page.value--; }
-function nextPage() { if (page.value < totalPages.value) page.value++; }
-function loadMore()  { if (page.value < totalPages.value) page.value++; }
+function prevPage() {
+  if (page.value > 1) page.value--;
+}
+function nextPage() {
+  if (page.value < totalPages.value) page.value++;
+}
+function loadMore() {
+  if (page.value < totalPages.value) page.value++;
+}
+
+const handleCreateTable = (newTable) => {
+  const existingIds = allTables.value.map((t) => parseInt(t.id.substring(1)));
+  const maxId = Math.max(...existingIds, 0);
+  const nextIdNumber = maxId + 1;
+  const nextId = `T${nextIdNumber.toString().padStart(2, "0")}`;
+
+  const tableToAdd = {
+    id: nextId,
+    name: newTable.name,
+    capacity: newTable.capacity,
+    status: newTable.status,
+    location: newTable.zone,
+  };
+
+  allTables.value.unshift(tableToAdd);
+  showForm.value = false;
+  page.value = 1;
+  activeTab.value = "All";
+};
 </script>
 
 <style scoped>
@@ -201,7 +334,7 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
 
 .tm-root {
   font-family: "DM Sans", sans-serif;
-  background: #f5f5f0;
+  /* background: #f5f5f0; */
   min-height: 100vh;
   padding: 2rem clamp(1rem, 4vw, 3rem);
   color: #1a1a18;
@@ -244,8 +377,12 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
   white-space: nowrap;
   transition: background 0.18s;
 }
-.tm-create-btn:hover { background: #155534; }
-.btn-icon { font-size: 1rem; }
+.tm-create-btn:hover {
+  background: #155534;
+}
+.btn-icon {
+  font-size: 1rem;
+}
 
 /* ── Stats ── */
 .tm-stats {
@@ -288,9 +425,18 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
   padding: 0.15rem 0.45rem;
   border-radius: 99px;
 }
-.stat-badge.up   { background: #dcfce7; color: #166534; }
-.stat-badge.down { background: #fef9c3; color: #854d0e; }
-.stat-sub { font-size: 0.8rem; color: #999; }
+.stat-badge.up {
+  background: #dcfce7;
+  color: #166534;
+}
+.stat-badge.down {
+  background: #fef9c3;
+  color: #854d0e;
+}
+.stat-sub {
+  font-size: 0.8rem;
+  color: #999;
+}
 
 /* ── Filter Bar ── */
 .tm-filters-bar {
@@ -321,7 +467,9 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
   font-family: inherit;
   color: #666;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 .tm-tab.active {
   background: #fff;
@@ -343,13 +491,18 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
   cursor: pointer;
   transition: border-color 0.15s;
 }
-.tm-filter-btn:hover { border-color: #bbb; }
+.tm-filter-btn:hover {
+  border-color: #bbb;
+}
 .tm-showing {
   font-size: 0.78rem;
   color: #aaa;
   margin-left: auto;
 }
-.tm-pagination { display: flex; gap: 0.25rem; }
+.tm-pagination {
+  display: flex;
+  gap: 0.25rem;
+}
 .pg-btn {
   width: 28px;
   height: 28px;
@@ -363,8 +516,13 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
   place-items: center;
   transition: background 0.15s;
 }
-.pg-btn:hover:not(:disabled) { background: #f5f5f0; }
-.pg-btn:disabled { opacity: 0.35; cursor: default; }
+.pg-btn:hover:not(:disabled) {
+  background: #f5f5f0;
+}
+.pg-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
 
 /* ── Table ── */
 .tm-table-wrap {
@@ -393,8 +551,12 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
   border-bottom: 1px solid #f5f5f0;
   transition: background 0.12s;
 }
-.tm-row:last-child { border-bottom: none; }
-.tm-row:hover { background: #fafaf7; }
+.tm-row:last-child {
+  border-bottom: none;
+}
+.tm-row:hover {
+  background: #fafaf7;
+}
 .tm-table td {
   padding: 0.95rem 1.25rem;
   vertical-align: middle;
@@ -410,8 +572,13 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
   border-radius: 5px;
   margin-right: 0.6rem;
 }
-.table-name { font-weight: 500; color: #222; }
-.td-cap { color: #666; }
+.table-name {
+  font-weight: 500;
+  color: #222;
+}
+.td-cap {
+  color: #666;
+}
 
 .status-badge {
   display: inline-block;
@@ -420,12 +587,23 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
   font-size: 0.78rem;
   font-weight: 600;
 }
-.status-badge.available { background: #dcfce7; color: #166534; }
-.status-badge.occupied  { background: #fef3c7; color: #92400e; }
-.status-badge.reserved  { background: #e0f2fe; color: #075985; }
+.status-badge.available {
+  background: #dcfce7;
+  color: #166534;
+}
+.status-badge.occupied {
+  background: #fef3c7;
+  color: #92400e;
+}
+.status-badge.reserved {
+  background: #e0f2fe;
+  color: #075985;
+}
 
 /* loc-content holds the icon + text; td-loc is just a plain cell on desktop */
-.td-loc { color: #555; }
+.td-loc {
+  color: #555;
+}
 .loc-content {
   display: inline-flex;
   align-items: center;
@@ -438,7 +616,9 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
   flex-shrink: 0;
 }
 
-.td-actions { text-align: right; }
+.td-actions {
+  text-align: right;
+}
 .action-btn {
   background: none;
   border: none;
@@ -447,10 +627,15 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
   cursor: pointer;
   padding: 0.3rem 0.4rem;
   border-radius: 5px;
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
   line-height: 1;
 }
-.action-btn:hover { color: #555; background: #f0f0ea; }
+.action-btn:hover {
+  color: #555;
+  background: #f0f0ea;
+}
 
 /* ── Load More ── */
 .tm-load-more {
@@ -470,8 +655,9 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
   border-radius: 6px;
   transition: background 0.15s;
 }
-.load-more-btn:hover { background: #f0faf5; }
-
+.load-more-btn:hover {
+  background: #f0faf5;
+}
 
 /* ═══════════════════════════════════════
    RESPONSIVE
@@ -523,14 +709,23 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
     text-align: center;
     padding: 0.35rem 0.4rem;
   }
-  .tm-showing { display: none; }
-  .tm-filter-btn { flex-shrink: 0; }
-  .tm-pagination { margin-left: auto; }
-  .pg-btn { width: 32px; height: 32px; }
+  .tm-showing {
+    display: none;
+  }
+  .tm-filter-btn {
+    flex-shrink: 0;
+  }
+  .tm-pagination {
+    margin-left: auto;
+  }
+  .pg-btn {
+    width: 32px;
+    height: 32px;
+  }
 
   /* ── Table → card layout ── */
   .tm-table-wrap {
-    overflow-x: unset;   /* no horizontal scroll */
+    overflow-x: unset; /* no horizontal scroll */
   }
   .tm-table {
     min-width: unset;
@@ -560,7 +755,9 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
     padding: 1rem;
     border-bottom: 1px solid #e8e8e2;
   }
-  .tm-row:last-child { border-bottom: none; }
+  .tm-row:last-child {
+    border-bottom: none;
+  }
 
   /* Every cell: flex column → small label on top, value below */
   .tm-table td {
@@ -589,16 +786,24 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
     padding-bottom: 0.65rem;
     border-bottom: 1px solid #f0f0ea;
   }
-  .tm-table td:first-child::before { display: none; }
+  .tm-table td:first-child::before {
+    display: none;
+  }
 
   /* Capacity */
-  .td-cap { grid-area: cap; }
+  .td-cap {
+    grid-area: cap;
+  }
 
   /* Status (3rd td, no unique class in original) */
-  .tm-table td:nth-child(3) { grid-area: status; }
-  
+  .tm-table td:nth-child(3) {
+    grid-area: status;
+  }
+
   /* Location */
-  .td-loc { grid-area: loc; }
+  .td-loc {
+    grid-area: loc;
+  }
 
   /* Actions — bottom-right, no label, buttons in a row */
   .td-actions {
@@ -608,13 +813,19 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
     align-items: flex-end;
     text-align: right;
   }
-  .td-actions::before { display: none; }
+  .td-actions::before {
+    display: none;
+  }
 
   /* Bigger touch targets on action buttons */
-  .action-btn { padding: 0.45rem 0.5rem; }
+  .action-btn {
+    padding: 0.45rem 0.5rem;
+  }
 
   /* loc-content wraps comfortably on narrow cards */
-  .loc-content { white-space: normal; }
+  .loc-content {
+    white-space: normal;
+  }
 }
 
 /* Small phones ≤ 400px — single column card */
