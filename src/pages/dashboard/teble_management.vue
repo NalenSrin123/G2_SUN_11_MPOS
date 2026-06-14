@@ -596,7 +596,7 @@ function loadMore()  { if (page.value < totalPages.value) page.value++; }
 
   /* Status (3rd td, no unique class in original) */
   .tm-table td:nth-child(3) { grid-area: status; }
-
+  
   /* Location */
   .td-loc { grid-area: loc; }
 
