@@ -18,6 +18,7 @@ import AddProduct from '../pages/dashboard/AddProduct.vue'
 import DesignPageCreateTable from '../pages/dashboard/DesignPageCreateTable.vue'
 import UserSetting from '../pages/dashboard/setting/UserSetting.vue'
 import Design_Product_List from '../pages/dashboard/Design_Product_List.vue'
+import Design_Menu_Category from '../pages/dashboard/Design_Menu_Category.vue'
 /**
  * Route definitions
  * Each route maps a URL path to a specific page component
@@ -55,6 +56,7 @@ const routes = [
     
   },
   {path: '/productlist',component: Design_Product_List},
+  {path:'/menu_category',component:Design_Menu_Category},
 
   /**
    * Authentication routes

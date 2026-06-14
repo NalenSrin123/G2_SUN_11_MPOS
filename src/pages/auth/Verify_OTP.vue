@@ -19,10 +19,14 @@
         <input
           v-for="i in 6"
           :key="i"
+          :ref="el => { if (el) inputs[i - 1] = el }"
           class="otp-input"
           type="tel"
           maxlength="1"
           inputmode="numeric"
+          @input="onInput(i - 1, $event)"
+          @keydown="onKeydown(i - 1, $event)"
+          @paste="onPaste($event)"
         />
       </div>
 
@@ -40,9 +44,40 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 
-const router = useRouter()
+const inputs = ref([])
+
+function onInput(index, event) {
+  const val = event.target.value
+
+ 
+  event.target.value = val.replace(/\D/g, '').slice(0, 1)
+
+  if (event.target.value && index < 5) {
+    inputs.value[index + 1].focus()
+  }
+}
+
+function onKeydown(index, event) {
+  if (event.key === 'Backspace' && !event.target.value && index > 0) {
+    inputs.value[index - 1].focus()
+  }
+}
+
+
+function onPaste(event) {
+  event.preventDefault()
+  const text = event.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
+  text.split('').forEach((char, i) => {
+    if (inputs.value[i]) {
+      inputs.value[i].value = char
+    }
+  })
+
+  const lastIndex = Math.min(text.length, 5)
+  inputs.value[lastIndex].focus()
+}
 </script>
 
 <style scoped>
