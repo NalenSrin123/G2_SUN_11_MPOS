@@ -23,6 +23,7 @@ import Update_payment from '../pages/dashboard/Update_payment.vue'
 import TableManagement from '@/pages/dashboard/teble_management.vue'
 import Design_New_Category from '@/pages/dashboard/categories/Design_New_Category.vue'
 import Overview from '../pages/dashboard/Overview.vue'
+import Scan_To_pay from '../pages/home/home/Scan_To_pay.vue'
 
 function isAuthenticated() {
   return !!localStorage.getItem('auth_token')
@@ -63,6 +64,9 @@ const routes = [
   {path:'/menu_category',component:Design_Menu_Category},
   {
     path: '/update_payment' , component: Update_payment
+  },
+  {
+    path: '/Scan_To_Pay' , component: Scan_To_pay
   },
 
   {
