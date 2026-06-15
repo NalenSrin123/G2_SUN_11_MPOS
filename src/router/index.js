@@ -23,6 +23,7 @@ import Update_payment from '../pages/dashboard/Update_payment.vue'
 import TableManagement from '@/pages/dashboard/teble_management.vue'
 import Design_New_Category from '@/pages/dashboard/categories/Design_New_Category.vue'
 import Overview from '../pages/dashboard/Overview.vue'
+import Design_History_Page from '../pages/home/Design_History_Page.vue'
 
 function isAuthenticated() {
   return !!localStorage.getItem('auth_token')
@@ -85,6 +86,8 @@ const routes = [
    */
   // { path: '/', component: Home },
   { path: '/home', component: Home },
+
+  { path: '/OrderHistory', component: Design_History_Page },
 
   // 404
   { path: '/:pathMatch(.*)*', component: NotFound },
