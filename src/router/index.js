@@ -26,6 +26,7 @@ import Register from '@/pages/auth/Register.vue'
 import Preview from '@/pages/preview/Preview.vue'
 import Home from '@/pages/home/Home.vue'
 import NotFound from '@/pages/NotFound.vue'
+import MainMenu from '@/pages/home/main_menu.vue'
 
 /**
  * Route definitions
@@ -55,6 +56,7 @@ const routes = [
    */
   { path: '/login', component: Login },
   { path: '/register', component: Register },
+  { path: '/main_menu', component: MainMenu },
 
   /**
    * Optional home route (disabled for now)
