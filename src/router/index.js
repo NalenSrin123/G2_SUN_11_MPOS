@@ -23,6 +23,7 @@ import Update_payment from '../pages/dashboard/Update_payment.vue'
 import TableManagement from '@/pages/dashboard/teble_management.vue'
 import Design_New_Category from '@/pages/dashboard/categories/Design_New_Category.vue'
 import Overview from '../pages/dashboard/Overview.vue'
+import Product_Detail from '../pages/home/Product_Detail.vue'
 
 function isAuthenticated() {
   return !!localStorage.getItem('auth_token')
@@ -79,6 +80,7 @@ const routes = [
 
   // Home
   { path: '/table_management', component: TableManagement },
+  { path: '/product_detail', component: Product_Detail },
   /**
    * Optional home route (disabled for now)
    * Uncomment when switching from preview to real landing page
