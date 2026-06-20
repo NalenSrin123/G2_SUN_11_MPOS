@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
 // Page components
 import Dashboard from '@/pages/dashboard/Dashboard.vue'
 import Sidebar from '@/pages/dashboard/Sidebar.vue'
@@ -14,22 +13,21 @@ import Forgot_Password from '@/pages/auth/Forgot_Password.vue'
 import FromInventory from '@/pages/dashboard/FromInventory.vue'
 import Verify_otp from '@/pages/auth/Verify_OTP.vue'
 import InventoryList from '@/pages/dashboard/InventoryList.vue'
+import Cart from '@/pages/home/Design_listcartpage.vue'
 /**
  * Route definitions
  * Each route maps a URL path to a specific page component
  */
 const routes = [
-  // Default route
+// Default route
   { path: '/', redirect: '/preview' },
-
-  // Preview page
+// Preview page
   { path: '/preview', component: Preview },
-
-  // Dashboard
+// Dashboard
   {
-    path: '/dashboard',
-    component: Sidebar,
-    children: [
+path: '/dashboard',
+component: Sidebar,
+children: [
       { path: '', name: 'dashboard', component: Dashboard },
       { path: 'orders', name: 'dashboard-orders', component: Orders },
       { path: 'inventory', name: 'dashboard-inventory', component: FromInventory },
@@ -37,10 +35,9 @@ const routes = [
   },
   { path: '/item', redirect: '/dashboard/inventory' },
   {
-    path: '/inventory_list' , component: InventoryList
+path: '/inventory_list' , component: InventoryList
   },
-
-  /**
+/**
    * Authentication routes
    */
   { path: '/login', component: Login },
@@ -48,21 +45,18 @@ const routes = [
   { path: '/verify_otp', component: Verify_otp },
   { path: '/forgot_password', component: Forgot_Password },
   { path: '/reset_password', component: ResetPassword },
-
-  // Home
+// Home
   { path: '/home', component: Home },
-
-  // 404
+// Cart
+  { path: '/cart', name: 'cart', component: Cart },
+// 404
   { path: '/:pathMatch(.*)*', component: NotFound },
 ]
-
-
 /**
  * Router instance configuration
  */
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+history: createWebHistory(),
+routes,
 })
-
 export default router
