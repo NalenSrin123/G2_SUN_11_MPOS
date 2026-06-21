@@ -25,7 +25,7 @@ import FromInventory from "../pages/dashboard/FromInventory.vue";
 import DesignPopularChoice from '../pages/home/DesignPopularChoice.vue'
 import Design_Payment_Page from '../pages/home/Payment_page.vue'
 import Design_History_Page from '../pages/home/Design_History_Page.vue'
-
+import MainMenu from '@/pages/home/main_menu.vue'
 function isAuthenticated() {
   return !!localStorage.getItem("auth_token");
 }
@@ -121,6 +121,7 @@ const routes = [
     path: '/popularChoices',
     component:DesignPopularChoice,
   },
+  { path: '/main_menu', component: MainMenu },
 ]
 
 
