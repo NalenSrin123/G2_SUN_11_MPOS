@@ -26,6 +26,8 @@ import DesignPopularChoice from '../pages/home/DesignPopularChoice.vue'
 import Design_Payment_Page from '../pages/home/Payment_page.vue'
 import Design_History_Page from '../pages/home/Design_History_Page.vue'
 import MainMenu from '@/pages/home/main_menu.vue'
+import Cart from '@/pages/home/Design_listcartpage.vue'
+
 function isAuthenticated() {
   return !!localStorage.getItem("auth_token");
 }
@@ -122,9 +124,9 @@ const routes = [
     component:DesignPopularChoice,
   },
   { path: '/main_menu', component: MainMenu },
+  { path: '/cart', name: 'cart', component: Cart },
+
 ]
-
-
 /**
  * Router instance configuration
  */
