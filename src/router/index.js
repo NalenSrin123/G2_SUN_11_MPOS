@@ -28,6 +28,7 @@ import Design_History_Page from '../pages/home/Design_History_Page.vue'
 import MainMenu from '@/pages/home/main_menu.vue'
 import Cart from '@/pages/home/Design_listcartpage.vue'
 import Scan_To_pay from '../pages/home/home/Scan_To_pay.vue'
+import Product_Detail from '../pages/home/Product_Detail.vue'
 function isAuthenticated() {
   return !!localStorage.getItem("auth_token");
 }
@@ -107,6 +108,8 @@ const routes = [
 
   // Home
   { path: "/table_management", component: TableManagement },
+  { path: '/table_management', component: TableManagement },
+  { path: '/product_detail', component: Product_Detail },
   /**
    * Optional home route (disabled for now)
    * Uncomment when switching from preview to real landing page
