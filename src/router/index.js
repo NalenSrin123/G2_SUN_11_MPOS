@@ -33,12 +33,17 @@ function isAuthenticated() {
   return !!localStorage.getItem("auth_token");
 }
 const routes = [
-  // Default route
-  { path: "/", redirect: "/preview" },
-
-  // Preview page
-  { path: "/preview", component: Preview },
-
+  //Auth
+  {
+    path:"/auth",
+    children:[
+      { path: "/login", component: Login },
+      { path: "/register", component: Register },
+      { path: "/verify_otp", component: Verify_otp },
+      { path: "/forgot_password", component: Forgot_Password },
+      { path: "/reset_password", component: ResetPassword },
+    ]
+  },
   // Dashboard
   {
     path: "/dashboard",
@@ -71,7 +76,9 @@ const routes = [
         path: "setting",
         name: "dashboard-setting",
         component: UserSetting,
-      }
+      },
+      { path: "table_management", component: TableManagement },
+      { path: 'table_management', component: TableManagement },
     ],
   },
 
@@ -99,39 +106,27 @@ const routes = [
   //   component: Design_New_Category,
   //   meta: { requiresAuth: false },
   // },
-
-  { path: "/login", component: Login },
-  { path: "/register", component: Register },
-  { path: "/verify_otp", component: Verify_otp },
-  { path: "/forgot_password", component: Forgot_Password },
-  { path: "/reset_password", component: ResetPassword },
-
-  // Home
-  { path: "/table_management", component: TableManagement },
-  { path: '/table_management', component: TableManagement },
-  { path: '/product_detail', component: Product_Detail },
-  /**
-   * Optional home route (disabled for now)
-   * Uncomment when switching from preview to real landing page
-   */
-  // { path: '/', component: Home },
-  { path: '/home', component: Home },
-  {path :'/payment_page' ,component:Design_Payment_Page},
-
-  { path: '/OrderHistory', component: Design_History_Page },
-
-  // 404
-  { path: '/:pathMatch(.*)*', component: NotFound },
+//  Public
   {
-    path: '/popularChoices',
-    component:DesignPopularChoice,
-  },
-  { path: '/main_menu', component: MainMenu },
-  { path: '/cart', name: 'cart', component: Cart },
-  {
-    path: '/Scan_To_Pay' , component: Scan_To_pay
-  },
+    path:"/",
+    children:[
+      { path: '/home', component: Home },
+      { path: '/product-detail', component: Product_Detail },
+      {path :'/payment-page' ,component:Design_Payment_Page},
 
+      { path: '/orderHistory', component: Design_History_Page },
+      { path: '/:pathMatch(.*)*', component: NotFound },
+      {
+        path: '/popularChoices',
+        component:DesignPopularChoice,
+      },
+      { path: '/main-menu', component: MainMenu },
+      { path: '/cart', name: 'cart', component: Cart },
+      {
+        path: '/scan-to-pay' , component: Scan_To_pay
+      },
+    ]
+  },
 ]
 /**
  * Router instance configuration
