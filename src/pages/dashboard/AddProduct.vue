@@ -1,20 +1,5 @@
 <template>
   <div class="min-h-screen font-sans">
-    <button
-      @click="$emit('close')"
-      class="flex items-center gap-1.5 text-[#1060FE] text-sm font-medium hover:underline whitespace-nowrap shrink-0"
-    >
-      <svg
-        class="w-4 h-4"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2.5"
-        viewBox="0 0 24 24"
-      >
-        <path d="M19 12H5M5 12l7-7M5 12l7 7" />
-      </svg>
-      Back to List
-    </button>
     <!-- Header -->
     <div class="mb-7">
       <div class="flex flex-wrap items-center justify-between gap-3 mb-1">
