@@ -256,11 +256,9 @@ const topItems = [
   --shadow:   0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
 
   font-family: 'Outfit', sans-serif;
-  background: var(--bg);
   color: var(--text);
   min-height: 100vh;
   width: 100%;
-  padding: clamp(16px, 3vw, 36px);
   display: flex;
   flex-direction: column;
   gap: clamp(14px, 2vw, 22px);

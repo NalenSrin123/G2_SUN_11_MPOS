@@ -7,7 +7,7 @@
   />
 
   <!-- Inventory dashboard -->
-  <div v-else class="min-h-screen bg-[#f8f9fa] p-8 font-sans text-[#4a5568]">
+  <div v-else class="min-h-screen bg-[#f8f9fa]  font-sans text-[#4a5568]">
     <div class="flex items-center justify-between mb-8">
       <div>
         <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">

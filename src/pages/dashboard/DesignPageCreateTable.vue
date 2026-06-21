@@ -1,14 +1,8 @@
 <template>
   <div
-    class="space-y-6 max-w-5xl mx-auto w-full flex flex-col items-center justify-center px-4"
+    class="space-y-6  mx-auto w-full flex flex-col items-center justify-center w-full"
   >
     <div class="w-full">
-      <button
-        @click="$emit('back')"
-        class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition mb-3"
-      >
-        <span>←</span> Back to List
-      </button>
       <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
         Add New Table
       </h1>

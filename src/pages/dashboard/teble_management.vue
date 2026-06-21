@@ -336,7 +336,6 @@ const handleCreateTable = (newTable) => {
   font-family: "DM Sans", sans-serif;
   /* background: #f5f5f0; */
   min-height: 100vh;
-  padding: 2rem clamp(1rem, 4vw, 3rem);
   color: #1a1a18;
 }
 
