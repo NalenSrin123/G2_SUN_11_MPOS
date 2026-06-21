@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
+  <div class="min-h-screen font-sans">
     <!-- Show Form when showForm is true, otherwise show Categories -->
     <div v-if="showForm">
       <design_-new_-category

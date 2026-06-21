@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen px-4 sm:px-6 lg:px-10 py-6 sm:py-8 font-sans">
+  <div class="min-h-screen font-sans">
     <button
       @click="$emit('close')"
       class="flex items-center gap-1.5 text-[#1060FE] text-sm font-medium hover:underline whitespace-nowrap shrink-0"

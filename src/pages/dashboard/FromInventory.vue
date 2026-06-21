@@ -1,26 +1,8 @@
 <template>
   <div
-    class="min-h-screen px-4 sm:px-6 lg:px-10 py-6 sm:py-8 font-sans"
+    class="min-h-screen font-sans"
   >
-    <!-- Back Nav -->
-    <nav class="mb-5">
-      <a
-        href="#"
-        @click.prevent="handleCancel"
-        class="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest text-blue-500 uppercase hover:opacity-60 transition-opacity"
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path
-            d="M10 12L6 8L10 4"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-        Back to Inventory
-      </a>
-    </nav>
+
 
     <!-- Page Header -->
     <div

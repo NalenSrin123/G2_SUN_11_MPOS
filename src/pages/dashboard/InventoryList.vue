@@ -7,12 +7,11 @@
   />
 
   <!-- Inventory dashboard -->
-  <div v-else class="min-h-screen bg-[#f8f9fa]  font-sans text-[#4a5568]">
+  <div v-else class="min-h-screen">
     <div class="flex items-center justify-between mb-8">
       <div>
-        <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">
-          Real-time tracking for your culinary supplies
-        </p>
+        <h1 class="title">Inventory</h1>
+        <p class="subtitle">Real-time tracking for your culinary supplies</p>
       </div>
       <button
         @click="showForm = true"
@@ -416,5 +415,16 @@ function handleAddItem(item) {
 /* Optional styling overrides to get precise match to dashboard vibes */
 body {
   background-color: #f8f9fa;
+}
+
+.title {
+  font-size: clamp(1.2rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+.subtitle {
+  font-size: clamp(0.75rem, 1.2vw, 0.85rem);
+  color: #64748b;
+  margin-top: 2px;
 }
 </style>

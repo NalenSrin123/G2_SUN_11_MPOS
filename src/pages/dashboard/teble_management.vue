@@ -322,8 +322,6 @@ const handleCreateTable = (newTable) => {
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap");
-
 *,
 *::before,
 *::after {
@@ -333,10 +331,19 @@ const handleCreateTable = (newTable) => {
 }
 
 .tm-root {
-  font-family: "DM Sans", sans-serif;
-  /* background: #f5f5f0; */
-  min-height: 100vh;
-  color: #1a1a18;
+  --surface: var(--dashboard-surface);
+  --blue: var(--dashboard-blue);
+  --blue-dk: var(--dashboard-blue-dark);
+  --blue-lt: var(--dashboard-blue-light);
+  --text: var(--dashboard-text);
+  --muted: var(--dashboard-muted);
+  --border: var(--dashboard-border);
+  --green: var(--dashboard-green);
+  --red: var(--dashboard-red);
+
+  font-family: var(--font-sans);
+  min-height: 100%;
+  color: var(--text);
 }
 
 /* ── Header ── */
@@ -349,22 +356,21 @@ const handleCreateTable = (newTable) => {
   margin-bottom: 1.75rem;
 }
 .tm-title {
-  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-size: clamp(1.2rem, 2.5vw, 1.75rem);
   font-weight: 700;
-  letter-spacing: -0.03em;
-  color: #111;
+  letter-spacing: -0.4px;
 }
 .tm-subtitle {
-  font-size: 0.85rem;
-  color: #888;
-  margin-top: 0.2rem;
+  font-size: clamp(0.75rem, 1.2vw, 0.85rem);
+  color: var(--muted);
+  margin-top: 2px;
 }
 .tm-create-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  background: #1a6840;
+  background: var(--blue);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -377,7 +383,7 @@ const handleCreateTable = (newTable) => {
   transition: background 0.18s;
 }
 .tm-create-btn:hover {
-  background: #155534;
+  background: var(--blue-dk);
 }
 .btn-icon {
   font-size: 1rem;
@@ -391,9 +397,9 @@ const handleCreateTable = (newTable) => {
   margin-bottom: 1.5rem;
 }
 .stat-card {
-  background: #fff;
-  border: 1px solid #e8e8e2;
-  border-radius: 12px;
+  background: var(--surface);
+  border-radius: var(--dashboard-radius);
+  box-shadow: var(--dashboard-shadow);
   padding: 1.1rem 1.25rem;
   display: flex;
   flex-direction: column;
@@ -415,8 +421,8 @@ const handleCreateTable = (newTable) => {
   font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 700;
   letter-spacing: -0.04em;
-  color: #111;
-  font-family: "DM Mono", monospace;
+  color: var(--text);
+  font-family: var(--font-mono);
 }
 .stat-badge {
   font-size: 0.72rem;
@@ -443,16 +449,16 @@ const handleCreateTable = (newTable) => {
   align-items: center;
   flex-wrap: wrap;
   gap: 0.75rem;
-  background: #fff;
-  border: 1px solid #e8e8e2;
-  border-radius: 12px 12px 0 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--dashboard-radius) var(--dashboard-radius) 0 0;
   padding: 0.85rem 1.25rem;
   border-bottom: none;
 }
 .tm-tabs {
   display: flex;
   gap: 0.3rem;
-  background: #f5f5f0;
+  background: #f1f5f9;
   border-radius: 8px;
   padding: 0.25rem;
 }
@@ -464,15 +470,15 @@ const handleCreateTable = (newTable) => {
   font-size: 0.82rem;
   font-weight: 500;
   font-family: inherit;
-  color: #666;
+  color: #475569;
   cursor: pointer;
   transition:
     background 0.15s,
     color 0.15s;
 }
 .tm-tab.active {
-  background: #fff;
-  color: #111;
+  background: var(--surface);
+  color: var(--blue);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   font-weight: 600;
 }
@@ -480,8 +486,8 @@ const handleCreateTable = (newTable) => {
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  border: 1px solid #e0e0da;
-  background: #fff;
+  border: 1px solid var(--border);
+  background: var(--surface);
   border-radius: 7px;
   padding: 0.3rem 0.8rem;
   font-size: 0.82rem;
@@ -491,7 +497,8 @@ const handleCreateTable = (newTable) => {
   transition: border-color 0.15s;
 }
 .tm-filter-btn:hover {
-  border-color: #bbb;
+  border-color: var(--blue);
+  color: var(--blue);
 }
 .tm-showing {
   font-size: 0.78rem;
@@ -525,9 +532,9 @@ const handleCreateTable = (newTable) => {
 
 /* ── Table ── */
 .tm-table-wrap {
-  background: #fff;
-  border: 1px solid #e8e8e2;
-  border-radius: 0 0 12px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0 0 var(--dashboard-radius) var(--dashboard-radius);
   overflow-x: auto;
 }
 .tm-table {
@@ -562,11 +569,11 @@ const handleCreateTable = (newTable) => {
   font-size: 0.875rem;
 }
 .table-id {
-  font-family: "DM Mono", monospace;
+  font-family: var(--font-mono);
   font-size: 0.8rem;
   font-weight: 500;
-  color: #1a6840;
-  background: #f0faf5;
+  color: var(--blue);
+  background: var(--blue-lt);
   padding: 0.18rem 0.55rem;
   border-radius: 5px;
   margin-right: 0.6rem;
@@ -645,7 +652,7 @@ const handleCreateTable = (newTable) => {
 .load-more-btn {
   background: none;
   border: none;
-  color: #1a6840;
+  color: var(--blue);
   font-size: 0.875rem;
   font-weight: 600;
   font-family: inherit;
@@ -655,7 +662,7 @@ const handleCreateTable = (newTable) => {
   transition: background 0.15s;
 }
 .load-more-btn:hover {
-  background: #f0faf5;
+  background: var(--blue-lt);
 }
 
 /* ═══════════════════════════════════════

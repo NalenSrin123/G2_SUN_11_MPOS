@@ -1,6 +1,6 @@
 <template>
-  <section class="w-full h-full bg-zinc-300 p-6">
-    <div class="lg:w-[90%] h-full gap-1 m-auto lg:flex md:grid">
+  <section class="w-full h-full ">
+    <div class="h-full w-full gap-1 m-auto lg:flex md:grid">
       <div class="lg:w-[25%] w-full p-3">
         <div
           class="lg:h-[60%] w-full border bg-zinc-100 border-zinc-400 rounded p-5 flex flex-col justify-between"
