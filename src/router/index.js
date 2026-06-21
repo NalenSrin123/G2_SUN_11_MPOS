@@ -23,6 +23,7 @@ import Overview from "@/pages/dashboard/Overview.vue";
 import InventoryList from "@/pages/dashboard/InventoryList.vue";
 import FromInventory from "../pages/dashboard/FromInventory.vue";
 import DesignPopularChoice from '../pages/home/DesignPopularChoice.vue'
+import Design_Payment_Page from '../pages/home/Payment_page.vue'
 
 function isAuthenticated() {
   return !!localStorage.getItem("auth_token");
@@ -108,7 +109,8 @@ const routes = [
    * Uncomment when switching from preview to real landing page
    */
   // { path: '/', component: Home },
-  { path: "/home", component: Home },
+  { path: '/home', component: Home },
+  {path :'/payment_page' ,component:Design_Payment_Page},
 
   // 404
   { path: '/:pathMatch(.*)*', component: NotFound },
