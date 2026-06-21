@@ -24,6 +24,7 @@ import InventoryList from "@/pages/dashboard/InventoryList.vue";
 import FromInventory from "../pages/dashboard/FromInventory.vue";
 import DesignPopularChoice from '../pages/home/DesignPopularChoice.vue'
 import Design_Payment_Page from '../pages/home/Payment_page.vue'
+import Design_History_Page from '../pages/home/Design_History_Page.vue'
 
 function isAuthenticated() {
   return !!localStorage.getItem("auth_token");
@@ -111,6 +112,8 @@ const routes = [
   // { path: '/', component: Home },
   { path: '/home', component: Home },
   {path :'/payment_page' ,component:Design_Payment_Page},
+
+  { path: '/OrderHistory', component: Design_History_Page },
 
   // 404
   { path: '/:pathMatch(.*)*', component: NotFound },
