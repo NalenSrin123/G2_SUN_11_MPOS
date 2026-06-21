@@ -22,6 +22,7 @@ import TableManagement from "@/pages/dashboard/teble_management.vue";
 import Overview from "@/pages/dashboard/Overview.vue";
 import InventoryList from "@/pages/dashboard/InventoryList.vue";
 import FromInventory from "../pages/dashboard/FromInventory.vue";
+import DesignPopularChoice from '../pages/home/DesignPopularChoice.vue'
 
 function isAuthenticated() {
   return !!localStorage.getItem("auth_token");
@@ -110,8 +111,13 @@ const routes = [
   { path: "/home", component: Home },
 
   // 404
-  { path: "/:pathMatch(.*)*", component: NotFound },
-];
+  { path: '/:pathMatch(.*)*', component: NotFound },
+  {
+    path: '/popularChoices',
+    component:DesignPopularChoice,
+  },
+]
+
 
 /**
  * Router instance configuration
