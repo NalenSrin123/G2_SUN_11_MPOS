@@ -12,7 +12,7 @@
 | - Allow extension (interceptors, headers, auth tokens)
 |
 | Notes:
-| - baseURL is set to "/api" (can be proxied in Vite or backend)
+| - baseURL is set to "https://g2-sun-11-mpos-back-1.onrender.com/api/v1"
 | - Add interceptors here for auth, error handling, logging
 |
 */
@@ -24,7 +24,7 @@ import axios from 'axios'
  * Used for all API requests in the application
  */
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: 'https://g2-sun-11-mpos-back-1.onrender.com/api/v1',
 })
 
 export default api
