@@ -3,7 +3,7 @@
     <div class="h-full w-full gap-1 m-auto lg:flex md:grid">
       <div class="lg:w-[25%] w-full p-3">
         <div
-          class="lg:h-[60%] w-full border bg-zinc-100 border-zinc-400 rounded p-5 flex flex-col justify-between"
+          class="h-fit w-full border bg-zinc-100 border-zinc-400 rounded p-5 flex flex-col justify-between"
         >
           <div class="flex flex-col items-center">
             <div class="relative w-28 h-28">
@@ -67,7 +67,7 @@
         </div>
 
         <div
-          class="lg:h-[40%] mt-5 border border-zinc-500 bg-zinc-100 rounded py-7 px-4"
+          class="h-fit mt-5 border border-zinc-500 bg-zinc-100 rounded py-4 px-4"
         >
           <div class="flex gap-1 items-center">
             <span class="text-blue-600">
@@ -76,7 +76,7 @@
             <h1 class="text-lg font-sans">Security</h1>
           </div>
           <div
-            class="flex justify-center rounded items-center gap-3 py-2 px-1 mt-8"
+            class="flex justify-center rounded items-center gap-3 py-2 px-1 mt-2"
           >
             <button
               @click="handleChangePassword"
@@ -94,7 +94,7 @@
             </button>
           </div>
           <div
-            class="flex justify-between items-center w-[99%] border rounded-xl border-gray-300 bg-white gap-3 py-3 px-3 mt-4 mb-10"
+            class="flex justify-between items-center w-[99%] border rounded-xl border-gray-300 bg-white gap-3 py-3 px-3 mt- mb-4"
           >
             <div class="flex items-center gap-3">
               <i class="fas fa-user-shield text-blue-600 text-center"></i>
@@ -121,7 +121,7 @@
 
       <div class="md:w-[97%] lg:w-[70%] w-full p-3">
         <div
-          class="border border-zinc-400 lg:h-[60%] md:h-[60%] h-[50%] bg-zinc-100 rounded overflow-auto"
+          class="border border-zinc-400  md:h-fit  bg-zinc-100 rounded overflow-auto"
         >
           <div class="bg-blue-900 p-5">
             <h1 class="text-xl font-bold text-white">Restaurant Profile</h1>
@@ -129,7 +129,7 @@
               Manage your business information and public presence
             </p>
           </div>
-          <div class="p-3 grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
+          <div class="p-3 grid grid-cols-1 md:grid-cols-2 gap-3  w-full">
             <div class="w-full px-2 mt-3">
               <form action="">
                 <label for="" class="text-xs font-semibold text-zinc-600"
@@ -220,7 +220,7 @@
             </div>
           </div>
         </div>
-        <div class="w-full mt-5 lg:h-[40%] md:h-[40%]">
+        <div class="w-full mt-5  md:h-fit">
           <div class="w-full h-full grid md:grid-cols-2 grid-cols-1 gap-5">
             <div
               class="rounded w-full h-full border border-zinc-400 bg-zinc-100 p-4"
