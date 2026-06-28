@@ -1,6 +1,5 @@
 <template>
   <div class="min-h-screen font-sans">
-    <!-- Show Form when showForm is true, otherwise show Categories -->
     <div v-if="showForm">
       <design_-new_-category
         @close="showForm = false"
@@ -8,19 +7,14 @@
       />
     </div>
 
-    <!-- Categories View (hidden when form is shown) -->
     <div v-else>
-      <!-- Header - Responsive stacking -->
-      <div
-        class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6 lg:mb-8"
-      >
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6 lg:mb-8">
         <div>
           <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900">
             Menu Categories
           </h1>
           <p class="text-sm sm:text-base text-slate-500 mt-1">
-            Organize your restaurant offerings into logical groups for easier
-            ordering and reporting.
+            Organize your restaurant offerings into logical groups for easier ordering and reporting.
           </p>
         </div>
         <button
@@ -31,82 +25,55 @@
         </button>
       </div>
 
-      <!-- Stat Cards - Fully responsive grid (1, 2, 4 columns) -->
-      <div
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 lg:mb-8"
-      >
-        <!-- Total Categories -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 lg:mb-8">
         <div class="card group">
           <p class="text-xs sm:text-sm text-slate-500">Total Categories</p>
           <div class="flex flex-wrap items-baseline justify-between gap-2 mt-1">
-            <span class="text-2xl sm:text-3xl font-bold text-slate-900">{{
-              totalCategories
-            }}</span>
-            <span
-              class="text-xs sm:text-sm text-emerald-600 font-medium bg-emerald-50 px-2 py-0.5 rounded-full"
-              >+2</span
-            >
+            <span class="text-2xl sm:text-3xl font-bold text-slate-900">{{ totalCategories }}</span>
+            <span class="text-xs sm:text-sm text-emerald-600 font-medium bg-emerald-50 px-2 py-0.5 rounded-full">+2</span>
           </div>
         </div>
 
-        <!-- Total Items -->
         <div class="card group">
-          <p class="text-xs sm:text-sm text-slate-500">Total Active Items</p>
+          <p class="text-xs sm:text-sm text-slate-500">Active Categories</p>
           <div class="flex flex-wrap items-baseline justify-between gap-2 mt-1">
-            <span class="text-2xl sm:text-3xl font-bold text-slate-900">{{
-              totalItems
-            }}</span>
-            <span class="text-xs sm:text-sm text-slate-400">Avg 12.3/cat</span>
+            <span class="text-2xl sm:text-3xl font-bold text-slate-900">{{ activeCategoriesCount }}</span>
+            <span class="text-xs sm:text-sm text-slate-400">Live on Menu</span>
           </div>
         </div>
 
-        <!-- Most Popular -->
         <div class="card group">
           <p class="text-xs sm:text-sm text-slate-500">Most Popular</p>
           <div class="flex flex-wrap items-center gap-2 mt-1">
-            <span
-              class="text-base sm:text-lg lg:text-xl font-bold text-slate-900 truncate"
-              >Main Course</span
-            >
-            <span
-              class="text-[10px] sm:text-xs font-semibold bg-orange-500 text-white px-2 py-0.5 rounded-full"
-              >HOT</span
-            >
+            <span class="text-base sm:text-lg lg:text-xl font-bold text-slate-900 truncate">Main Course</span>
+            <span class="text-[10px] sm:text-xs font-semibold bg-orange-500 text-white px-2 py-0.5 rounded-full">HOT</span>
           </div>
         </div>
 
-        <!-- Inventory Health -->
         <div class="card group flex justify-between items-center">
           <div>
-            <p class="text-xs sm:text-sm text-slate-500">Inventory Health</p>
-            <span
-              class="text-2xl sm:text-3xl font-bold text-slate-900 mt-1 block"
-              >94%</span
-            >
+            <p class="text-xs sm:text-sm text-slate-500">Server Status</p>
+            <span class="text-2xl sm:text-3xl font-bold text-slate-900 mt-1 block">Online</span>
           </div>
-          <div
-            class="w-8 h-8 sm:w-10 sm:h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 text-base sm:text-lg transition-all group-hover:scale-110 group-hover:bg-emerald-100"
-          >
-            📊
+          <div class="w-8 h-8 sm:w-10 sm:h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 text-base sm:text-lg transition-all group-hover:scale-110 group-hover:bg-emerald-100">
+            🟢
           </div>
         </div>
       </div>
 
-      <!-- Main Table Card -->
-      <div
-        class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"
-      >
-        <!-- Toolbar - Responsive stacking -->
-        <div
-          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 px-4 sm:px-5 py-3 bg-slate-50/80 border-b border-slate-200"
-        >
-          <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-            <span
-              class="text-[10px] sm:text-xs font-semibold text-slate-500 tracking-wide bg-slate-200/50 px-2 py-0.5 rounded"
-              >ACTIVE MENU</span
-            >
+      <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm position-relative">
+        
+        <div v-if="isLoading" class="absolute inset-0 bg-white/70 backdrop-blur-[1px] z-10 flex items-center justify-center min-h-[200px]">
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <span class="text-xs font-medium text-slate-500">Syncing database...</span>
+          </div>
+        </div>
 
-            <!-- Filter Toggle Button -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 px-4 sm:px-5 py-3 bg-slate-50/80 border-b border-slate-200">
+          <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            <span class="text-[10px] sm:text-xs font-semibold text-slate-500 tracking-wide bg-slate-200/50 px-2 py-0.5 rounded">ACTIVE MENU</span>
+
             <button
               @click="showFilter = !showFilter"
               class="text-xs font-medium text-slate-600 border border-slate-300 rounded-md px-2.5 py-1 bg-white hover:bg-slate-50 transition-colors"
@@ -114,7 +81,6 @@
               {{ showFilter ? "✕ Hide" : "🔍 Filter" }}
             </button>
 
-            <!-- Search Input - Conditionally shown -->
             <transition name="fade">
               <input
                 v-if="showFilter"
@@ -122,115 +88,79 @@
                 type="text"
                 placeholder="Search category name..."
                 class="filter-input flex-1 sm:w-48"
-                @input="page = 1"
                 autofocus
               />
             </transition>
           </div>
 
-          <span
-            class="text-xs text-slate-400 w-full sm:w-auto text-left sm:text-right"
-          >
-            Showing {{ startIdx + 1 }}-{{ endIdx }} of
-            {{ filteredCategories.length }}
+          <span class="text-xs text-slate-400 w-full sm:w-auto text-left sm:text-right">
+            Showing {{ totalCategories > 0 ? startIdx + 1 : 0 }}-{{ endIdx }} of {{ filteredCategories.length }}
           </span>
         </div>
 
-        <!-- Responsive Table - Horizontal scroll on mobile -->
         <div class="overflow-x-auto">
           <table class="w-full text-sm min-w-[500px]">
             <thead>
-              <tr
-                class="text-left text-slate-500 border-b border-slate-100 bg-slate-50/30"
-              >
-                <th class="px-4 sm:px-5 py-3 font-semibold text-xs sm:text-sm">
-                  Category
-                </th>
-                <th
-                  class="px-4 sm:px-5 py-3 font-semibold text-xs sm:text-sm hidden md:table-cell"
-                >
-                  Description
-                </th>
-                <th
-                  class="px-4 sm:px-5 py-3 font-semibold text-xs sm:text-sm text-center sm:text-left"
-                >
-                  Items
-                </th>
-                <th
-                  class="px-4 sm:px-5 py-3 font-semibold text-xs sm:text-sm text-right"
-                >
-                  Actions
-                </th>
+              <tr class="text-left text-slate-500 border-b border-slate-100 bg-slate-50/30">
+                <th class="px-4 sm:px-5 py-3 font-semibold text-xs sm:text-sm">Category</th>
+                <th class="px-4 sm:px-5 py-3 font-semibold text-xs sm:text-sm hidden md:table-cell">Description</th>
+                <th class="px-4 sm:px-5 py-3 font-semibold text-xs sm:text-sm text-center sm:text-left">Status</th>
+                <th class="px-4 sm:px-5 py-3 font-semibold text-xs sm:text-sm text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="cat in pagedCategories"
-                :key="cat.name"
+                :key="cat.id"
                 class="table-row group transition-colors"
               >
-                <!-- Category Name with Icon -->
                 <td class="px-4 sm:px-5 py-3 sm:py-4">
                   <div class="flex items-center gap-2 sm:gap-3">
                     <div class="icon-tile w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0">
                       <component
-                        :is="cat.icon"
+                        :is="getIconComponent(cat.name)"
                         :size="16"
                         class="sm:w-[18px] sm:h-[18px]"
                       />
                     </div>
-                    <span
-                      class="font-semibold text-slate-900 text-sm sm:text-base break-words"
-                      >{{ cat.name }}</span
-                    >
+                    <span class="font-semibold text-slate-900 text-sm sm:text-base break-words">
+                      {{ cat.name }}
+                    </span>
                   </div>
                 </td>
 
-                <!-- Description - Hidden on mobile -->
-                <td
-                  class="px-4 sm:px-5 py-3 sm:py-4 text-slate-500 text-xs sm:text-sm hidden md:table-cell"
-                >
-                  <span class="line-clamp-2">{{ cat.description }}</span>
+                <td class="px-4 sm:px-5 py-3 sm:py-4 text-slate-500 text-xs sm:text-sm hidden md:table-cell">
+                  <span class="line-clamp-2">{{ cat.description || 'No description provided.' }}</span>
                 </td>
 
-                <!-- Items Count -->
                 <td class="px-4 sm:px-5 py-3 sm:py-4 text-center sm:text-left">
                   <span
-                    class="inline-flex items-center justify-center min-w-[3rem] px-2 py-0.5 bg-slate-100 rounded-full text-xs sm:text-sm font-semibold text-slate-700"
+                    :class="[
+                      'inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wide',
+                      cat.is_active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600'
+                    ]"
                   >
-                    {{ cat.items }}
+                    {{ cat.is_active ? 'Active' : 'Inactive' }}
                   </span>
                 </td>
 
-                <!-- Actions Menu -->
                 <td class="px-4 sm:px-5 py-3 sm:py-4 text-right">
-                  <button
-                    class="action-dots p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
-                  >
-                    <span
-                      class="text-slate-400 group-hover:text-slate-600 text-lg leading-none"
-                      >⋮</span
-                    >
+                  <button class="action-dots p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+                    <span class="text-slate-400 group-hover:text-slate-600 text-lg leading-none">⋮</span>
                   </button>
                 </td>
               </tr>
 
-              <!-- Empty State -->
-              <tr v-if="filteredCategories.length === 0">
+              <tr v-if="filteredCategories.length === 0 && !isLoading">
                 <td colspan="4" class="px-4 sm:px-5 py-12 text-center">
                   <div class="text-slate-400">
                     <span class="text-4xl opacity-50">🔍</span>
-                    <p class="mt-2 text-sm">
-                      No categories found matching "{{ searchQuery }}"
-                    </p>
+                    <p class="mt-2 text-sm">No categories found matching "{{ searchQuery }}"</p>
                     <button
-                      @click="
-                        searchQuery = '';
-                        showFilter = false;
-                      "
+                      @click="searchQuery = ''; showFilter = false;"
                       class="mt-2 text-xs text-blue-500 hover:text-blue-600 underline"
                     >
-                      Clear search
+                      Clear search query
                     </button>
                   </div>
                 </td>
@@ -239,24 +169,15 @@
           </table>
         </div>
 
-        <!-- Pagination - Fully responsive -->
-        <div
-          class="flex flex-col sm:flex-row justify-between items-center gap-4 px-4 sm:px-5 py-3 border-t border-slate-100 bg-slate-50/30"
-        >
-          <!-- Info text -->
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 px-4 sm:px-5 py-3 border-t border-slate-100 bg-slate-50/30">
           <span class="text-xs text-slate-400 order-2 sm:order-1">
             Showing
-            <span class="font-medium text-slate-600">{{ startIdx + 1 }}</span>
+            <span class="font-medium text-slate-600">{{ totalCategories > 0 ? startIdx + 1 : 0 }}</span>
             to <span class="font-medium text-slate-600">{{ endIdx }}</span> of
-            <span class="font-medium text-slate-600">{{
-              filteredCategories.length
-            }}</span>
-            categories
+            <span class="font-medium text-slate-600">{{ filteredCategories.length }}</span> categories
           </span>
 
-          <!-- Pagination Controls -->
           <div class="flex gap-1 order-1 sm:order-2 flex-wrap justify-center">
-            <!-- Previous Button -->
             <button
               @click="page = Math.max(1, page - 1)"
               :disabled="page === 1"
@@ -267,7 +188,6 @@
               <span class="sm:hidden">‹</span>
             </button>
 
-            <!-- First page (if far) -->
             <button
               v-if="totalPages > 5 && page > 3"
               @click="page = 1"
@@ -275,11 +195,8 @@
             >
               1
             </button>
-            <span v-if="totalPages > 5 && page > 3" class="px-1 text-slate-300"
-              >...</span
-            >
+            <span v-if="totalPages > 5 && page > 3" class="px-1 text-slate-300">...</span>
 
-            <!-- Page numbers (dynamic range) -->
             <button
               v-for="p in visiblePages"
               :key="p"
@@ -289,12 +206,7 @@
               {{ p }}
             </button>
 
-            <!-- Last page (if far) -->
-            <span
-              v-if="totalPages > 5 && page < totalPages - 2"
-              class="px-1 text-slate-300"
-              >...</span
-            >
+            <span v-if="totalPages > 5 && page < totalPages - 2" class="px-1 text-slate-300">...</span>
             <button
               v-if="totalPages > 5 && page < totalPages - 2"
               @click="page = totalPages"
@@ -303,7 +215,6 @@
               {{ totalPages }}
             </button>
 
-            <!-- Next Button -->
             <button
               @click="page = Math.min(totalPages, page + 1)"
               :disabled="page === totalPages"
@@ -316,36 +227,21 @@
           </div>
         </div>
       </div>
-
-      <!-- Mobile Quick Stats Bar (visible only on small screens) -->
-      <div
-        class="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200 sm:hidden"
-      >
-        <div class="flex justify-between items-center text-xs text-slate-500">
-          <div class="text-center flex-1">
-            <span class="block font-bold text-slate-800">{{
-              totalCategories
-            }}</span>
-            <span>Categories</span>
-          </div>
-          <div class="w-px h-6 bg-slate-200"></div>
-          <div class="text-center flex-1">
-            <span class="block font-bold text-slate-800">{{ totalItems }}</span>
-            <span>Total Items</span>
-          </div>
-          <div class="w-px h-6 bg-slate-200"></div>
-          <div class="text-center flex-1">
-            <span class="block font-bold text-emerald-600">94%</span>
-            <span>Health</span>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
+import Design_New_Category from "./Design_New_Category.vue";
+import axios from "axios";
+
+// 1. Initializing Axios Instance
+const api = axios.create({
+  baseURL: "https://g2-sun-11-mpos-back-1.onrender.com/api/v1",
+});
+
+// Import Icons
 import {
   Soup,
   Beef,
@@ -360,101 +256,70 @@ import {
   UtensilsCrossed,
 } from "lucide-vue-next";
 
-// Category data
-const categories = ref([
-  {
-    name: "Appetizers",
-    icon: UtensilsCrossed,
-    description:
-      "Small plates and snacks to start the meal, including tapas, bruschetta, and shareable bites",
-    items: 18,
-  },
-  {
-    name: "Main Course",
-    icon: Beef,
-    description:
-      "Hearty signature dishes, steaks, pasta, and sea-to-table specialties",
-    items: 42,
-  },
-  {
-    name: "Desserts",
-    icon: IceCreamBowl,
-    description:
-      "Handcrafted sweets, artisanal gelatos, and seasonal fruit selections",
-    items: 12,
-  },
-  {
-    name: "Beverages",
-    icon: Wine,
-    description:
-      "Craft cocktails, local wines, organic juices, and premium spirits",
-    items: 24,
-  },
-  {
-    name: "Lunch Specials",
-    icon: Sandwich,
-    description: "Daily rotating lunch items available from 11 AM to 3 PM",
-    items: 6,
-  },
-  {
-    name: "Soups & Salads",
-    icon: Salad,
-    description: "Fresh greens and warm broths for a light and healthy start",
-    items: 10,
-  },
-  {
-    name: "Breakfast",
-    icon: Coffee,
-    description:
-      "Morning favorites served until 11 AM, including eggs, pancakes, and more",
-    items: 14,
-  },
-  {
-    name: "Sides",
-    icon: Soup,
-    description: "Perfect accompaniments to any main dish",
-    items: 8,
-  },
-  {
-    name: "Kids Menu",
-    icon: Baby,
-    description:
-      "Smaller portions for younger guests, with fun and healthy options",
-    items: 7,
-  },
-  {
-    name: "Pizza",
-    icon: Pizza,
-    description: "Wood-fired pizzas with house-made dough and fresh toppings",
-    items: 9,
-  },
-  {
-    name: "Sandwiches",
-    icon: Sandwich,
-    description: "Hearty handhelds with artisan bread and premium fillings",
-    items: 11,
-  },
-  {
-    name: "Specials",
-    icon: Star,
-    description: "Chef curated rotating seasonal specials",
-    items: 5,
-  },
-]);
+// Mapping backend names dynamically to components
+const iconMap = {
+  "appetizers": UtensilsCrossed,
+  "main course": Beef,
+  "updated category": Beef,
+  "desserts": IceCreamBowl,
+  "beverages": Wine,
+  "lunch specials": Sandwich,
+  "soups & salads": Salad,
+  "breakfast": Coffee,
+  "sides": Soup,
+  "kids menu": Baby,
+  "pizza": Pizza,
+  "sandwiches": Sandwich,
+  "specials": Star,
+};
 
-// Reactive state
+const getIconComponent = (name) => {
+  if (!name) return UtensilsCrossed;
+  return iconMap[name.toLowerCase()] || UtensilsCrossed;
+};
+
+// Component reactive state variables
+const categories = ref([]);
+const isLoading = ref(false);
 const page = ref(1);
 const perPage = 5;
 const showFilter = ref(false);
 const searchQuery = ref("");
 const showForm = ref(false);
 
-// Computed properties
-const filteredCategories = computed(() =>
-  categories.value.filter((c) =>
-    c.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
-  ),
-);
+// 2. Network Endpoint Request Handling Logic
+const fetchCategories = async () => {
+  isLoading.value = true;
+  try {
+    const response = await api.get("/categories", {
+      params: {
+        // Only append query value if text data is present in input element
+        search: searchQuery.value.trim() || undefined,
+      },
+    });
+    if (response.data && response.data.success) {
+      categories.value = response.data.data;
+    }
+  } catch (error) {
+    console.error("Error connecting to server categories route structural model endpoint:", error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// Mount component actions lifecycle 
+onMounted(() => {
+  fetchCategories();
+});
+
+// Watch state adjustments to handle queries
+watch(searchQuery, () => {
+  page.value = 1;
+  fetchCategories();
+});
+
+// Pagination Computeds
+const filteredCategories = computed(() => categories.value);
 
 const totalPages = computed(() =>
   Math.max(1, Math.ceil(filteredCategories.value.length / perPage)),
@@ -467,12 +332,12 @@ const pagedCategories = computed(() =>
   filteredCategories.value.slice(startIdx.value, endIdx.value),
 );
 
+// Metadata statistics counters mapped from raw responses
 const totalCategories = computed(() => categories.value.length);
-const totalItems = computed(() =>
-  categories.value.reduce((sum, c) => sum + c.items, 0),
+const activeCategoriesCount = computed(() =>
+  categories.value.filter((c) => c.is_active).length,
 );
 
-// Visible page numbers for pagination (responsive)
 const visiblePages = computed(() => {
   const total = totalPages.value;
   const current = page.value;
@@ -496,27 +361,27 @@ const visiblePages = computed(() => {
   return result;
 });
 
-// Watch to reset page when search changes
-import { watch } from "vue";
-import Design_New_Category from "./Design_New_Category.vue";
-
-watch(searchQuery, () => {
-  page.value = 1;
-});
-
-// Function to handle adding a new category
-const handleAddProduct = (newCategory) => {
-  categories.value.push({
-    name: newCategory.name,
-    icon: UtensilsCrossed,
-    description: "New category added",
-    items: 0,
-  });
+// Update component data upon forms saving dynamic items
+const handleAddProduct = () => {
+  fetchCategories();
   showForm.value = false;
 };
 </script>
 
 <style scoped>
+.absolute {
+  position: absolute;
+}
+.inset-0 {
+  top: 0; right: 0; bottom: 0; left: 0;
+}
+.z-10 {
+  z-index: 10;
+}
+.bg-white\/70 {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
 /* Card Styles */
 .card {
   background: #ffffff;
@@ -559,10 +424,6 @@ const handleAddProduct = (newCategory) => {
   transform: translateY(-1px);
 }
 
-.btn-primary:active {
-  transform: translateY(0);
-}
-
 /* Icon Tile */
 .icon-tile {
   border-radius: 0.5rem;
@@ -590,11 +451,6 @@ const handleAddProduct = (newCategory) => {
   background-color: #fafbff;
 }
 
-/* Action Dots */
-.action-dots {
-  cursor: pointer;
-}
-
 /* Page Button */
 .page-btn {
   min-width: 2rem;
@@ -611,15 +467,6 @@ const handleAddProduct = (newCategory) => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-}
-
-@media (max-width: 640px) {
-  .page-btn {
-    min-width: 1.75rem;
-    height: 1.75rem;
-    font-size: 0.75rem;
-    padding: 0 0.375rem;
-  }
 }
 
 .page-btn:disabled {
@@ -655,7 +502,6 @@ const handleAddProduct = (newCategory) => {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* Line clamp utility */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -663,12 +509,11 @@ const handleAddProduct = (newCategory) => {
   overflow: hidden;
 }
 
-/* Fade transition */
+/* Fade transition animation styles */
 .fade-enter-active,
 .fade-leave-active {
   transition: all 0.2s ease;
 }
-
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
