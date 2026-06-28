@@ -52,97 +52,43 @@
           </p>
         </div>
 
-        <!-- Category Icon / Image -->
+        <!-- Description -->
         <div class="field">
-          <span class="field-label">Category icon / image</span>
-
-          <div
-            class="upload-zone"
-            :class="{ 'is-dragging': isDragging, 'has-preview': !!previewUrl }"
-            role="button"
-            tabindex="0"
-            aria-label="Upload category image"
-            @click="triggerFileInput"
-            @keydown.enter.prevent="triggerFileInput"
-            @keydown.space.prevent="triggerFileInput"
-            @dragover.prevent="isDragging = true"
-            @dragleave.prevent="isDragging = false"
-            @drop.prevent="handleDrop"
+          <label class="field-label" for="category-description"
+            >Description</label
           >
-            <!-- Image preview -->
-            <template v-if="previewUrl">
-              <img
-                :src="previewUrl"
-                alt="Category image preview"
-                class="preview-img"
-              />
-              <button
-                class="remove-btn"
-                type="button"
-                aria-label="Remove image"
-                @click.stop="removeFile"
-              >
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            </template>
-
-            <!-- Upload prompt -->
-            <template v-else>
-              <div class="upload-icon" aria-hidden="true">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <polyline points="16 16 12 12 8 16" />
-                  <line x1="12" y1="12" x2="12" y2="21" />
-                  <path
-                    d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"
-                  />
-                </svg>
-              </div>
-              <p class="upload-main">Click to upload or drag and drop</p>
-              <p class="upload-sub">Max. 800 × 400 px</p>
-              <div class="badge-row" aria-label="Accepted formats">
-                <span class="badge">SVG</span>
-                <span class="badge">PNG</span>
-                <span class="badge">JPG</span>
-                <span class="badge">GIF</span>
-              </div>
-            </template>
-          </div>
-
-          <!-- Hidden file input -->
-          <input
-            ref="fileInput"
-            type="file"
-            accept="image/svg+xml,image/png,image/jpeg,image/gif"
-            class="sr-only"
-            tabindex="-1"
-            @change="handleFileChange"
-          />
-
+          <textarea
+            id="category-description"
+            v-model="description"
+            class="text-input textarea"
+            placeholder="e.g., Fresh, locally sourced seasonal dishes"
+            rows="3"
+          ></textarea>
           <p class="field-hint">
-            Recommended: square image at least 200 × 200 px for best display.
+            Optional description for internal reference or special notes.
           </p>
+        </div>
+
+        <!-- is_active toggle (optional) -->
+        <div class="field field-inline">
+          <label class="field-label" for="is-active">Active status</label>
+          <div class="toggle-wrapper">
+            <button
+              id="is-active"
+              class="toggle-btn"
+              :class="{ 'is-active': isActive }"
+              type="button"
+              role="switch"
+              :aria-checked="isActive"
+              @click="isActive = !isActive"
+            >
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">{{
+                isActive ? "Active" : "Inactive"
+              }}</span>
+            </button>
+            <p class="field-hint">Visible on the menu when active.</p>
+          </div>
         </div>
       </div>
 
@@ -154,7 +100,7 @@
         <button
           type="button"
           class="btn-save"
-          :disabled="!categoryName.trim()"
+          :disabled="!categoryName.trim() || loading"
           @click="handleSave"
         >
           <svg
@@ -174,14 +120,21 @@
             <polyline points="17 21 17 13 7 13 7 21" />
             <polyline points="7 3 7 8 15 8" />
           </svg>
-          <span class="btn-text">Save category</span>
+          <span class="btn-text">{{
+            loading ? "Saving..." : "Save category"
+          }}</span>
         </button>
       </div>
+
+      <!-- Error message -->
+      <p v-if="error" class="error-msg">{{ error }}</p>
     </div>
   </div>
 </template>
 
 <script>
+import api from "@/services/api";
+
 export default {
   name: "Design_New_Category",
 
@@ -190,56 +143,40 @@ export default {
   data() {
     return {
       categoryName: "",
-      imageFile: null,
-      previewUrl: null,
-      isDragging: false,
+      description: "",
+      isActive: true,
+      loading: false,
+      error: null,
     };
   },
 
   methods: {
-    triggerFileInput() {
-      this.$refs.fileInput.click();
-    },
-
-    handleFileChange(event) {
-      const file = event.target.files?.[0];
-      if (file) this.loadFile(file);
-    },
-
-    handleDrop(event) {
-      this.isDragging = false;
-      const file = event.dataTransfer.files?.[0];
-      if (file && file.type.startsWith("image/")) this.loadFile(file);
-    },
-
-    loadFile(file) {
-      this.removeFile();
-      this.imageFile = file;
-      this.previewUrl = URL.createObjectURL(file);
-    },
-
-    removeFile() {
-      if (this.previewUrl) URL.revokeObjectURL(this.previewUrl);
-      this.imageFile = null;
-      this.previewUrl = null;
-      if (this.$refs.fileInput) this.$refs.fileInput.value = "";
-    },
-
     handleCancel() {
       this.$emit("close");
     },
 
-    handleSave() {
+    async handleSave() {
       if (!this.categoryName.trim()) return;
-      this.$emit("add", {
-        name: this.categoryName.trim(),
-        image: this.imageFile,
-      });
-    },
-  },
 
-  beforeUnmount() {
-    this.removeFile();
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { data } = await api.post("/categories", {
+          name: this.categoryName.trim(),
+          description: this.description.trim() || null,
+          is_active: this.isActive,
+        });
+
+        this.$emit("add", data);
+        this.$emit("close");
+      } catch (err) {
+        this.error =
+          err.response?.data?.message || "Failed to create category.";
+      } finally {
+        this.loading = false;
+      }
+    },
   },
 };
 </script>
@@ -249,18 +186,6 @@ export default {
   background: #ffffff;
   border-radius: 1rem;
   overflow: hidden;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
 }
 
 /* Card */
@@ -404,6 +329,11 @@ export default {
     background 0.15s;
 }
 
+.text-input.textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
 @media (min-width: 640px) {
   .text-input {
     padding: 10px 14px;
@@ -422,171 +352,75 @@ export default {
   background: #ffffff;
 }
 
-/* Upload Zone */
-.upload-zone {
+/* Inline field for toggle */
+.field-inline {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.field-inline .field-label {
+  margin-bottom: 0;
+}
+
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toggle-wrapper .field-hint {
+  margin-top: 0;
+}
+
+/* Toggle button */
+.toggle-btn {
   position: relative;
-  border: 1.5px dashed #d1d5db;
-  border-radius: 10px;
-  padding: 32px 16px;
-  display: flex;
-  flex-direction: column;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  gap: 10px;
+  background: #e5e7eb;
+  border: none;
+  border-radius: 24px;
+  padding: 0;
+  width: 48px;
+  height: 26px;
   cursor: pointer;
-  background: #f9fafb;
-  transition:
-    border-color 0.15s,
-    background 0.15s;
-  outline: none;
-  min-height: 180px;
-}
-
-@media (min-width: 480px) {
-  .upload-zone {
-    padding: 38px 20px;
-  }
-}
-
-@media (min-width: 640px) {
-  .upload-zone {
-    padding: 44px 24px;
-    min-height: 200px;
-  }
-}
-
-.upload-zone:hover,
-.upload-zone:focus-visible {
-  border-color: #0d9488;
-  background: #f0fdfa;
-}
-
-.upload-zone.is-dragging {
-  border-color: #0d9488;
-  background: #f0fdfa;
-}
-
-.upload-zone.has-preview {
-  border-style: solid;
-  border-color: #0d9488;
-  padding: 12px;
-}
-
-/* Upload Icon */
-.upload-icon {
-  width: 44px;
-  height: 44px;
-  background: #e6f7f5;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #0d9488;
-  margin-bottom: 4px;
+  transition: background 0.2s ease;
   flex-shrink: 0;
 }
 
-@media (min-width: 640px) {
-  .upload-icon {
-    width: 52px;
-    height: 52px;
-    margin-bottom: 8px;
-  }
-}
-
-.upload-main {
-  font-size: 13px;
-  font-weight: 500;
-  color: #111827;
-  margin: 0;
-  text-align: center;
-}
-
-@media (min-width: 640px) {
-  .upload-main {
-    font-size: 14px;
-  }
-}
-
-.upload-sub {
-  font-size: 11px;
-  color: #9ca3af;
-  margin: 0;
-  text-align: center;
-}
-
-@media (min-width: 640px) {
-  .upload-sub {
-    font-size: 12px;
-  }
-}
-
-/* Format badges */
-.badge-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 4px;
-  justify-content: center;
-}
-
-.badge {
-  font-size: 10px;
-  font-weight: 500;
-  padding: 2px 7px;
-  border-radius: 4px;
-  background: #f3f4f6;
-  border: 0.5px solid #e5e7eb;
-  color: #6b7280;
-}
-
-@media (min-width: 640px) {
-  .badge {
-    font-size: 11px;
-    padding: 3px 8px;
-  }
-}
-
-/* Image preview */
-.preview-img {
-  max-width: 100%;
-  max-height: 160px;
-  object-fit: contain;
-  border-radius: 6px;
-}
-
-@media (min-width: 640px) {
-  .preview-img {
-    max-height: 180px;
-  }
-}
-
-.remove-btn {
+.toggle-btn .toggle-slider {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 26px;
-  height: 26px;
+  left: 3px;
+  top: 3px;
+  width: 20px;
+  height: 20px;
+  background: white;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.6);
-  color: #ffffff;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition:
-    background 0.15s,
-    transform 0.15s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
 }
 
-.remove-btn:hover {
-  background: rgba(0, 0, 0, 0.8);
-  transform: scale(1.05);
+.toggle-btn.is-active {
+  background: #0d9488;
 }
 
-.remove-btn:active {
-  transform: scale(0.95);
+.toggle-btn.is-active .toggle-slider {
+  transform: translateX(22px);
+}
+
+.toggle-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  margin-left: 56px;
+  white-space: nowrap;
+}
+
+.toggle-btn.is-active .toggle-label {
+  color: #0d9488;
 }
 
 /* Card footer */
@@ -612,6 +446,15 @@ export default {
   .card-footer {
     padding: 18px 28px 24px;
   }
+}
+
+/* Error message */
+.error-msg {
+  color: #ef4444;
+  font-size: 12px;
+  text-align: center;
+  padding: 0 20px 12px;
+  margin: 0;
 }
 
 /* Buttons */
@@ -703,9 +546,6 @@ export default {
 @media (max-width: 640px) {
   button {
     min-height: 44px;
-  }
-  .upload-zone {
-    cursor: pointer;
   }
 }
 </style>

@@ -345,7 +345,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import {
   Soup,
   Beef,
@@ -359,6 +359,7 @@ import {
   Star,
   UtensilsCrossed,
 } from "lucide-vue-next";
+import Design_New_Category from "./Design_New_Category.vue";
 
 // Category data
 const categories = ref([
@@ -452,7 +453,7 @@ const showForm = ref(false);
 // Computed properties
 const filteredCategories = computed(() =>
   categories.value.filter((c) =>
-    c.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
+    c?.name?.toLowerCase().includes(searchQuery.value.toLowerCase()),
   ),
 );
 
@@ -469,7 +470,7 @@ const pagedCategories = computed(() =>
 
 const totalCategories = computed(() => categories.value.length);
 const totalItems = computed(() =>
-  categories.value.reduce((sum, c) => sum + c.items, 0),
+  categories.value.reduce((sum, c) => sum + (c.items || 0), 0),
 );
 
 // Visible page numbers for pagination (responsive)
@@ -497,20 +498,22 @@ const visiblePages = computed(() => {
 });
 
 // Watch to reset page when search changes
-import { watch } from "vue";
-import Design_New_Category from "./Design_New_Category.vue";
-
 watch(searchQuery, () => {
   page.value = 1;
 });
 
 // Function to handle adding a new category
 const handleAddProduct = (newCategory) => {
+  const cat = newCategory?.data ?? newCategory;
+
+  if (!cat?.name) return;
+
   categories.value.push({
-    name: newCategory.name,
+    name: cat.name,
     icon: UtensilsCrossed,
-    description: "New category added",
+    description: cat.description || "New category added",
     items: 0,
+    is_active: cat.is_active ?? true,
   });
   showForm.value = false;
 };
