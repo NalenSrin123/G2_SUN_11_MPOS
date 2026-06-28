@@ -12,7 +12,9 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: #f4f6f4;
+  background: var(--dashboard-bg);
+  color: var(--dashboard-text);
+  font-family: var(--font-sans);
 }
 #app {
   min-height: 100dvh;

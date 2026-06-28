@@ -1,29 +1,10 @@
 <template>
   <div
-    class="min-h-screen bg-slate-50 p-6 font-sans text-slate-800 antialiased">
+    class="min-h-screen font-sans text-slate-800 antialiased">
     <header
       class="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
       <div>
-        <div class="flex items-center gap-2 text-xs text-slate-500">
-          <span>Payments</span>
-          <span>&gt;</span>
-          <span class="text-emerald-600 font-medium">Update Payment</span>
-        </div>
         <div class="mt-2 flex items-center gap-3">
-          <button class="rounded-full p-1 hover:bg-slate-200 transition-colors">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
-              class="h-6 w-6">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-            </svg>
-          </button>
           <h1 class="text-2xl font-bold text-slate-900">
             Transaction #{{ transactionId }}
           </h1>
@@ -42,7 +23,7 @@
         </button>
         <button
           @click="saveChanges"
-          class="rounded-md bg-emerald-800 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 shadow-sm transition-colors">
+          class="rounded-md  bg-blue-500 hover:bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors">
           Save Changes
         </button>
       </div>
@@ -124,7 +105,7 @@
               >
             </div>
             <div
-              class="flex class w-full max-w-xs justify-between border-b border-emerald-400 pb-3">
+              class="flex class w-full max-w-xs justify-between border-b pb-3">
               <span>Service Fee</span>
               <span class="font-medium text-slate-900"
                 >${{ serviceFee.toFixed(2) }}</span
@@ -133,7 +114,7 @@
             <div
               class="flex w-full max-w-xs justify-between pt-2 text-lg font-bold text-slate-900">
               <span>Total</span>
-              <span class="text-emerald-700">${{ total.toFixed(2) }}</span>
+              <span class="text-red-500">${{ total.toFixed(2) }}</span>
             </div>
           </div>
         </div>

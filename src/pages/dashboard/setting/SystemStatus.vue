@@ -2,7 +2,7 @@
   <h2 class="text-xl font-bold text-gray-800">System Status</h2>
 
   <div class="space-y-4">
-    <div class="p-4 bg-slate-50/70 border border-slate-100 rounded-xl">
+    <div class="p-3 mt-2 bg-slate-50/70 border border-slate-100 rounded-xl">
       <div class="flex justify-between items-center mb-2">
         <span class="text-xs font-bold tracking-wider text-blue-900"
           >STORAGE USAGE</span

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen p-4 sm:p-6 md:p-8 font-sans">
+  <div class="min-h-screen font-sans">
     <!-- Add Product Form — replaces the list entirely -->
     <AddProduct
       v-if="showForm"
