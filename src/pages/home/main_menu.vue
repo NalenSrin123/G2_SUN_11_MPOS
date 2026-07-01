@@ -1,4 +1,11 @@
+
+<!-- <script setup>
+import DesignPopularChoice from './DesignPopularChoice.vue'
+</script> -->
 <template>
+  <!-- Call the Pupolar choice -->
+
+
   <div class="w-full flex justify-center bg-gray-200 min-h-screen">
     <div class="w-full max-w-md md:max-w-2xl lg:max-w-4xl p-4 md:p-6">
       <!-- Title -->

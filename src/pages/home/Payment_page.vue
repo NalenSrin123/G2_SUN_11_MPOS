@@ -1,9 +1,14 @@
+  <script>
+    const goToPayment = () => {
+  router.push('/payment-page')
+}
+  </script>
 <template>
   <div class="page-wrap">
     <div class="screen">
       <!-- Header -->
       <div class="header">
-        <button class="header-btn" aria-label="Go back">
+        <button class="header-btn" aria-label="Go back"  @click="$router.push('/Cart')">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -340,7 +345,8 @@
             Platform fee included
           </div>
         </div>
-        <button class="pay-btn">
+        
+        <button class="pay-btn"  @click="$router.push('/scan-to-pay')">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"

@@ -3,8 +3,8 @@
 
     <!-- Header -->
     <header class="header">
-      <button class="icon-btn" aria-label="Go back">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      <button class="icon-btn cursor-pointer" aria-label="Go back">
+        <svg width="20" height="20"  @click="$router.back()" " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
       <span class="logo">Ur Order List </span>
       <button class="icon-btn" aria-label="Notifications">
@@ -79,7 +79,7 @@
       <button
         class="cta-btn"
         :disabled="cartItems.length === 0"
-        @click="placeOrder"
+        @click="$router.push('/payment-page')"
       >
         {{ ordered ? 'Order Placed!' : 'Place Order' }}
         <svg v-if="!ordered" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -176,14 +176,12 @@ function placeOrder() {
   padding: 20px 16px 100px;
   overflow-y: auto;
 }
-
 .page-title {
   font-size: 22px;
   font-weight: 600;
   color: #1a2e22;
   margin-bottom: 16px;
 }
-
 .empty {
   text-align: center;
   padding: 60px 20px;

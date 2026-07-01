@@ -327,7 +327,7 @@
               v-model="form.description"
               rows="4"
               placeholder="Add detailed notes about the ingredient, storage requirements, or allergen information..."
-              class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all resize-y min-h-[90px]"
+              class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all resize-y min-h-22.5"
             />
           </div>
         </div>
