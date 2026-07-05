@@ -233,9 +233,8 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from "vue";
-import Design_New_Category from "./Design_New_Category.vue";
 import axios from "axios";
-import api from "@services/api"; // Adjust the import path based on your project structure
+import api from "@/services/api"; // Adjust the import path based on your project structure
 
 // Import Icons
 import {
