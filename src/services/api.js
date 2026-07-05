@@ -12,7 +12,7 @@
 | - Allow extension (interceptors, headers, auth tokens)
 |
 | Notes:
-| - baseURL is set to "https://g2-sun-11-mpos-back-1.onrender.com/api/v1"
+| - baseURL is set to "https://g2-sun-11-mpos-back.onrender.com/api/v1"
 | - Add interceptors here for auth, error handling, logging
 |
 */

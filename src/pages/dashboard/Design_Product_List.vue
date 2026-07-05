@@ -301,9 +301,9 @@
     </template>
   </div>
 </template>
-
 <script setup>
-import { ref, computed, watch } from "vue";
+import api from '@/services/api.js';
+import { ref, computed, watch, onMounted } from "vue";
 import {
   ClipboardList,
   TriangleAlert,
@@ -327,116 +327,27 @@ const page = ref(1);
 const itemsPerPage = 4;
 
 const products = ref([
-  {
-    name: "Wagyu Ribeye Steak",
-    sku: "MEAT-001",
-    category: "Main Course",
-    price: 58.0,
-    status: "IN STOCK",
-    image:
-      "https://images.unsplash.com/photo-1558030006-450675393462?w=100&h=100&fit=crop",
-  },
-  {
-    name: "Chateau Margaux 2015",
-    sku: "WINE-452",
-    category: "Beverages",
-    price: 420.0,
-    status: "LOW STOCK",
-    image:
-      "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=100&h=100&fit=crop",
-  },
-  {
-    name: "Black Truffle Pasta",
-    sku: "PASTA-12",
-    category: "Main Course",
-    price: 32.0,
-    status: "OUT OF STOCK",
-    image:
-      "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=100&h=100&fit=crop",
-  },
-  {
-    name: "Classic Caesar Salad",
-    sku: "SAL-089",
-    category: "Appetizers",
-    price: 14.5,
-    status: "IN STOCK",
-    image:
-      "https://images.unsplash.com/photo-1546793665-c74683f339c1?w=100&h=100&fit=crop",
-  },
-  {
-    name: "Grilled Salmon Fillet",
-    sku: "FISH-203",
-    category: "Main Course",
-    price: 26.0,
-    status: "IN STOCK",
-    image:
-      "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=100&h=100&fit=crop",
-  },
-  {
-    name: "Lobster Bisque",
-    sku: "SOUP-077",
-    category: "Appetizers",
-    price: 18.0,
-    status: "LOW STOCK",
-    image:
-      "https://images.unsplash.com/photo-1547592180-85f173990554?w=100&h=100&fit=crop",
-  },
-  {
-    name: "Craft IPA Beer",
-    sku: "BEER-014",
-    category: "Beverages",
-    price: 8.5,
-    status: "IN STOCK",
-    image:
-      "https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=100&h=100&fit=crop",
-  },
-  {
-    name: "Chocolate Lava Cake",
-    sku: "DESS-099",
-    category: "Desserts",
-    price: 12.0,
-    status: "OUT OF STOCK",
-    image:
-      "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?w=100&h=100&fit=crop",
-  },
-  {
-    name: "Margherita Pizza",
-    sku: "PIZZA-034",
-    category: "Main Course",
-    price: 22.0,
-    status: "IN STOCK",
-    image:
-      "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=100&h=100&fit=crop",
-  },
-  {
-    name: "Tiramisu",
-    sku: "DESS-045",
-    category: "Desserts",
-    price: 11.0,
-    status: "LOW STOCK",
-    image:
-      "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=100&h=100&fit=crop",
-  },
-  {
-    name: "Fresh Orange Juice",
-    sku: "BEV-008",
-    category: "Beverages",
-    price: 6.0,
-    status: "IN STOCK",
-    image:
-      "https://images.unsplash.com/photo-1613478223719-2ab802602423?w=100&h=100&fit=crop",
-  },
-  {
-    name: "BBQ Pulled Pork Sandwich",
-    sku: "MEAT-067",
-    category: "Main Course",
-    price: 19.5,
-    status: "IN STOCK",
-    image:
-      "https://images.unsplash.com/photo-1544025162-d76694265947?w=100&h=100&fit=crop",
-  },
 ]);
+const fetchProducts = async () => {
 
+  try {
+    const res = await api.get("/products");
+
+    // console.log("API RESPONSE:", api);
+
+    // support different backend formats
+    products.value = res.data.data || res.data || [];
+
+  } catch (error) {
+    console.log(error);
+    error.value = "Failed to load products";
+  } 
+};
+
+// ================= ON LOAD =================
+onMounted(() => {
+  fetchProducts();
+});
 const outOfStockCount = computed(
   () => products.value.filter((p) => p.status === "OUT OF STOCK").length,
 );
