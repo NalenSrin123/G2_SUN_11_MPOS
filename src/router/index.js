@@ -29,6 +29,7 @@ import MainMenu from '@/pages/home/main_menu.vue'
 import Cart from '@/pages/home/Design_listcartpage.vue'
 import Scan_To_pay from '../pages/home/home/Scan_To_pay.vue'
 import Product_Detail from '../pages/home/Product_Detail.vue'
+import Update_Product from "../pages/dashboard/Update_Product.vue";
 function isAuthenticated() {
   return !!localStorage.getItem("auth_token");
 }
@@ -125,6 +126,7 @@ const routes = [
       {
         path: '/scan-to-pay' , component: Scan_To_pay
       },
+      { path: '/update_product', component: Update_Product}
     ]
   },
 ]
