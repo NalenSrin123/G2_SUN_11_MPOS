@@ -10,17 +10,12 @@
     <div v-else>
       <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6 lg:mb-8">
         <div>
-          <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900">
-            Menu Categories
-          </h1>
+          <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900">Menu Categories</h1>
           <p class="text-sm sm:text-base text-slate-500 mt-1">
             Organize your restaurant offerings into logical groups for easier ordering and reporting.
           </p>
         </div>
-        <button
-          @click="showForm = true"
-          class="btn-primary w-full sm:w-auto justify-center sm:justify-start"
-        >
+        <button @click="showForm = true" class="btn-primary w-full sm:w-auto justify-center sm:justify-start">
           <span class="text-lg">+</span> Create Category
         </button>
       </div>
@@ -80,7 +75,6 @@
             >
               {{ showFilter ? "✕ Hide" : "🔍 Filter" }}
             </button>
-
             <transition name="fade">
               <input
                 v-if="showFilter"
@@ -99,7 +93,7 @@
         </div>
 
         <div class="overflow-x-auto">
-          <table class="w-full text-sm min-w-[500px]">
+          <table class="w-full text-sm min-w-125">
             <thead>
               <tr class="text-left text-slate-500 border-b border-slate-100 bg-slate-50/30">
                 <th class="px-4 sm:px-5 py-3 font-semibold text-xs sm:text-sm">Category</th>
@@ -134,20 +128,37 @@
                 </td>
 
                 <td class="px-4 sm:px-5 py-3 sm:py-4 text-center sm:text-left">
-                  <span
-                    :class="[
-                      'inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wide',
-                      cat.is_active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600'
-                    ]"
-                  >
-                    {{ cat.is_active ? 'Active' : 'Inactive' }}
+                  <span class="inline-flex items-center justify-center min-w-[3rem] px-2 py-0.5 bg-slate-100 rounded-full text-xs sm:text-sm font-semibold text-slate-700">
+                    {{ cat.items }}
                   </span>
                 </td>
 
-                <td class="px-4 sm:px-5 py-3 sm:py-4 text-right">
-                  <button class="action-dots p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
-                    <span class="text-slate-400 group-hover:text-slate-600 text-lg leading-none">⋮</span>
+                <!-- Actions Dropdown -->
+                <td class="relative px-4 sm:px-5 py-3 sm:py-4 text-right">
+                  <button
+                    @click.stop="toggleMenu(cat.id)"
+                    class="p-2 rounded-lg hover:bg-slate-100 transition"
+                  >
+                    ⋮
                   </button>
+
+                  <div
+                    v-if="activeMenu === cat.id"
+                    class="absolute right-5 mt-1 w-40 bg-white border border-slate-200 rounded-lg shadow-lg z-50"
+                  >
+                    <button
+                      @click="editCategory(cat)"
+                      class="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 rounded-t-lg"
+                    >
+                      ✏️ Edit
+                    </button>
+                    <button
+                      @click="handleDelete(cat.id)"
+                      class="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 rounded-b-lg"
+                    >
+                      🗑 Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
 
@@ -202,9 +213,7 @@
               :key="p"
               @click="page = p"
               :class="['page-btn', { active: page === p }]"
-            >
-              {{ p }}
-            </button>
+            >{{ p }}</button>
 
             <span v-if="totalPages > 5 && page < totalPages - 2" class="px-1 text-slate-300">...</span>
             <button
@@ -232,23 +241,14 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted ,onBeforeUnmount} from "vue";
 import axios from "axios";
 import api from "@/services/api"; // Adjust the import path based on your project structure
 
 // Import Icons
 import {
-  Soup,
-  Beef,
-  IceCreamBowl,
-  Wine,
-  Sandwich,
-  Salad,
-  Coffee,
-  Pizza,
-  Baby,
-  Star,
-  UtensilsCrossed,
+  Soup, Beef, IceCreamBowl, Wine, Sandwich,
+  Salad, Coffee, Pizza, Baby, Star, UtensilsCrossed,
 } from "lucide-vue-next";
 import Design_New_Category from "./Design_New_Category.vue";
 
@@ -281,8 +281,18 @@ const page = ref(1);
 const perPage = 5;
 const showFilter = ref(false);
 const searchQuery = ref("");
-const showForm = ref(false);
-
+const showForm   = ref(false);
+import { deleteCategory } from '../../services/api.js';
+const handleDelete = async (id) => {
+  try {
+    await deleteCategory(id);
+    categories.value = categories.value.filter((c) => c.id !== id);
+    if (page.value > totalPages.value) page.value = totalPages.value;
+    activeMenu.value = null;
+  } catch (error) {
+    alert('Delete fail');
+  }
+}
 // 2. Network Endpoint Request Handling Logic
 const fetchCategories = async () => {
   isLoading.value = true;
@@ -323,14 +333,14 @@ const filteredCategories = computed(() =>
 );
 
 const totalPages = computed(() =>
-  Math.max(1, Math.ceil(filteredCategories.value.length / perPage)),
+  Math.max(1, Math.ceil(filteredCategories.value.length / perPage))
 );
 const startIdx = computed(() => (page.value - 1) * perPage);
-const endIdx = computed(() =>
-  Math.min(startIdx.value + perPage, filteredCategories.value.length),
+const endIdx   = computed(() =>
+  Math.min(startIdx.value + perPage, filteredCategories.value.length)
 );
 const pagedCategories = computed(() =>
-  filteredCategories.value.slice(startIdx.value, endIdx.value),
+  filteredCategories.value.slice(startIdx.value, endIdx.value)
 );
 
 // Metadata statistics counters mapped from raw responses
@@ -343,22 +353,17 @@ const totalItems = computed(() =>
 );
 
 const visiblePages = computed(() => {
-  const total = totalPages.value;
+  const total   = totalPages.value;
   const current = page.value;
-  const delta = window.innerWidth < 640 ? 1 : 2;
-
-  const range = [];
-  const start = Math.max(2, current - delta);
-  const end = Math.min(total - 1, current + delta);
-
-  for (let i = start; i <= end; i++) {
-    range.push(i);
-  }
+  const delta   = window.innerWidth < 640 ? 1 : 2;
 
   if (total <= 1) return [1];
-  if (total <= 5) {
-    return Array.from({ length: total }, (_, i) => i + 1);
-  }
+  if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
+
+  const start = Math.max(2, current - delta);
+  const end   = Math.min(total - 1, current + delta);
+  const range = [];
+  for (let i = start; i <= end; i++) range.push(i);
 
   const result = [1, ...range];
   if (!result.includes(total)) result.push(total);
@@ -385,6 +390,19 @@ const handleAddProduct = (newCategory) => {
   });
   showForm.value = false;
 };
+
+const editCategory = (cat) => {
+  activeMenu.value = null;
+  // TODO: open your edit form/modal here and pass `cat`
+  console.log("Edit category:", cat);
+};
+
+// const deleteCategory = (id) => {
+//   activeMenu.value = null;
+//   categories.value = categories.value.filter((c) => c.id !== id);
+//   // Clamp page if current page no longer exists
+//   if (page.value > totalPages.value) page.value = totalPages.value;
+// };
 </script>
 
 <style scoped>
@@ -409,20 +427,14 @@ const handleAddProduct = (newCategory) => {
   padding: 1rem;
   transition: all 0.2s ease;
 }
-
-@media (max-width: 640px) {
-  .card {
-    padding: 0.875rem;
-  }
-}
-
+@media (max-width: 640px) { .card { padding: 0.875rem; } }
 .card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,.05);
   transform: translateY(-2px);
   border-color: #cbd5e1;
 }
 
-/* Button Primary */
+/* ── Primary button ── */
 .btn-primary {
   background-color: #2563eb;
   color: #ffffff;
@@ -437,6 +449,8 @@ const handleAddProduct = (newCategory) => {
   cursor: pointer;
   border: none;
 }
+.btn-primary:hover  { background-color: #1d4ed8; transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
 
 .btn-primary:hover {
   background-color: #1d4ed8;
@@ -454,11 +468,11 @@ const handleAddProduct = (newCategory) => {
   transition: all 0.2s ease;
   flex-shrink: 0;
 }
+.table-row:hover .icon-tile { background-color: #dbeafe; transform: scale(1.05); }
 
-.table-row:hover .icon-tile {
-  background-color: #dbeafe;
-  transform: scale(1.05);
-}
+/* ── Table row ── */
+.table-row { border-bottom: 1px solid #f1f5f9; transition: background-color 0.15s ease; }
+.table-row:hover { background-color: #fafbff; }
 
 /* Table Row */
 .table-row {
@@ -514,12 +528,9 @@ const handleAddProduct = (newCategory) => {
   transition: all 0.15s ease;
   background-color: white;
 }
+.filter-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
 
-.filter-input:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
+/* ── Utilities ── */
 
 .line-clamp-2 {
   display: -webkit-box;
