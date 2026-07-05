@@ -235,11 +235,7 @@
 import { ref, computed, watch, onMounted } from "vue";
 import Design_New_Category from "./Design_New_Category.vue";
 import axios from "axios";
-
-// 1. Initializing Axios Instance
-const api = axios.create({
-  baseURL: "https://g2-sun-11-mpos-back-1.onrender.com/api/v1",
-});
+import api from "@services/api"; // Adjust the import path based on your project structure
 
 // Import Icons
 import {
@@ -255,6 +251,7 @@ import {
   Star,
   UtensilsCrossed,
 } from "lucide-vue-next";
+import Design_New_Category from "./Design_New_Category.vue";
 
 // Mapping backend names dynamically to components
 const iconMap = {
@@ -319,7 +316,12 @@ watch(searchQuery, () => {
 });
 
 // Pagination Computeds
-const filteredCategories = computed(() => categories.value);
+// Computed properties
+const filteredCategories = computed(() =>
+  categories.value.filter((c) =>
+    c?.name?.toLowerCase().includes(searchQuery.value.toLowerCase()),
+  ),
+);
 
 const totalPages = computed(() =>
   Math.max(1, Math.ceil(filteredCategories.value.length / perPage)),
@@ -336,6 +338,9 @@ const pagedCategories = computed(() =>
 const totalCategories = computed(() => categories.value.length);
 const activeCategoriesCount = computed(() =>
   categories.value.filter((c) => c.is_active).length,
+);
+const totalItems = computed(() =>
+  categories.value.reduce((sum, c) => sum + (c.items || 0), 0),
 );
 
 const visiblePages = computed(() => {
@@ -361,9 +366,24 @@ const visiblePages = computed(() => {
   return result;
 });
 
-// Update component data upon forms saving dynamic items
-const handleAddProduct = () => {
-  fetchCategories();
+// Watch to reset page when search changes
+watch(searchQuery, () => {
+  page.value = 1;
+});
+
+// Function to handle adding a new category
+const handleAddProduct = (newCategory) => {
+  const cat = newCategory?.data ?? newCategory;
+
+  if (!cat?.name) return;
+
+  categories.value.push({
+    name: cat.name,
+    icon: UtensilsCrossed,
+    description: cat.description || "New category added",
+    items: 0,
+    is_active: cat.is_active ?? true,
+  });
   showForm.value = false;
 };
 </script>
