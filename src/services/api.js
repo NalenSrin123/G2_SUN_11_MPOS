@@ -24,7 +24,7 @@ import axios from 'axios'
  * Used for all API requests in the application
  */
 const api = axios.create({
-  baseURL: 'https://g2-sun-11-mpos-back-1.onrender.com/api/v1',
+  baseURL: 'https://g2-sun-11-mpos-back.onrender.com/api/v1',
 })
 
 export default api
