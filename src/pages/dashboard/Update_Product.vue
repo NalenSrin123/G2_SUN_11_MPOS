@@ -34,11 +34,7 @@
                 stroke="currentColor"
                 stroke-width="4"
               />
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v8H4z"
-              />
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
             </svg>
             {{ saving ? "Saving..." : "Save Product" }}
           </button>
@@ -47,16 +43,12 @@
     </div>
 
     <!-- Body -->
-    <div
-      class="flex flex-col lg:grid lg:grid-cols-[1fr_300px] gap-5 items-start"
-    >
+    <div class="flex flex-col lg:grid lg:grid-cols-[1fr_300px] gap-5 items-start">
       <!-- Left Column -->
       <div class="flex flex-col gap-5 w-full">
         <!-- General Information -->
         <div class="bg-white rounded-2xl border border-gray-200 p-5 sm:p-7">
-          <h2 class="text-base font-bold text-gray-900 mb-6">
-            General Information
-          </h2>
+          <h2 class="text-base font-bold text-gray-900 mb-6">General Information</h2>
 
           <div class="mb-5">
             <label class="block text-xs font-semibold text-gray-600 mb-1.5"
@@ -148,9 +140,7 @@
 
         <!-- Inventory Settings -->
         <div class="bg-white rounded-2xl border border-gray-200 p-5 sm:p-7">
-          <h2
-            class="flex items-center gap-2 text-base font-bold text-gray-900 mb-6"
-          >
+          <h2 class="flex items-center gap-2 text-base font-bold text-gray-900 mb-6">
             <svg
               class="w-[18px] h-[18px] text-[#1060FE] shrink-0"
               fill="none"
@@ -234,9 +224,7 @@
 
         <!-- Price -->
         <div class="bg-white rounded-2xl border border-gray-200 p-5 sm:p-7">
-          <label class="block text-xs font-semibold text-gray-600 mb-1.5"
-            >Price</label
-          >
+          <label class="block text-xs font-semibold text-gray-600 mb-1.5">Price</label>
           <div
             class="flex items-center border rounded-lg overflow-hidden transition-all"
             :class="
@@ -267,14 +255,10 @@
 
         <!-- Active Status -->
         <div class="bg-white rounded-2xl border border-gray-200 p-5 sm:p-7">
-          <label class="block text-xs font-semibold text-gray-600 mb-1.5"
-            >Status</label
-          >
+          <label class="block text-xs font-semibold text-gray-600 mb-1.5">Status</label>
           <div class="flex items-center justify-between">
             <div>
-              <span class="text-sm font-medium text-gray-700"
-                >Active Product</span
-              >
+              <span class="text-sm font-medium text-gray-700">Active Product</span>
               <p class="text-xs text-gray-400">Visible to customers</p>
             </div>
             <button
@@ -358,14 +342,13 @@ export default {
       const p = props.product;
       if (!p) return;
 
-      originalId.value = p.id ?? p.sku ?? props.productId ?? null;
+      // Update strictly by id.
+      originalId.value = p.id ?? props.productId ?? null;
 
       form.name = p.name ?? "";
       form.description = p.description ?? "";
-      form.price =
-        p.price !== undefined && p.price !== null ? String(p.price) : "";
-      form.stock =
-        p.stock !== undefined && p.stock !== null ? Number(p.stock) : 0;
+      form.price = p.price !== undefined && p.price !== null ? String(p.price) : "";
+      form.stock = p.stock !== undefined && p.stock !== null ? Number(p.stock) : 0;
       form.image = p.image ?? "";
 
       // is_active may come as a boolean, or be inferred from a status string
@@ -399,8 +382,6 @@ export default {
     async function fetchCategories() {
       loadingCategories.value = true;
       try {
-        // Categories are a read — always GET, and always the /categories endpoint
-        // (this must NOT point at /products, and must NOT be PUT).
         const response = await api.get("/categories");
 
         let categoriesData = [];
@@ -415,10 +396,7 @@ export default {
           categoriesData = response.data.results;
         } else if (response.data && typeof response.data === "object") {
           for (const key in response.data) {
-            if (
-              Array.isArray(response.data[key]) &&
-              response.data[key].length > 0
-            ) {
+            if (Array.isArray(response.data[key]) && response.data[key].length > 0) {
               if (
                 response.data[key][0] &&
                 response.data[key][0].id &&
@@ -467,10 +445,7 @@ export default {
         errors.price = "Please enter a valid price.";
       } else if (priceValue > 999999.99) {
         errors.price = "Price cannot exceed $999,999.99.";
-      } else if (
-        String(form.price).includes(".") &&
-        String(form.price).split(".")[1]?.length > 2
-      ) {
+      } else if (String(form.price).includes(".") && String(form.price).split(".")[1]?.length > 2) {
         errors.price = "Price can only have up to 2 decimal places.";
       }
 
@@ -492,7 +467,7 @@ export default {
       }
 
       if (!originalId.value) {
-        alert("❌ Missing product identifier — cannot update.");
+        alert("❌ Missing product id — cannot update.");
         return;
       }
 
@@ -509,11 +484,8 @@ export default {
           is_active: form.is_active,
         };
 
-        // Correct: updating a specific product is PUT /products/{id}
-        const response = await api.put(
-          `/products/${originalId.value}`,
-          payload,
-        );
+        // Update strictly by id: PUT /products/{id}
+        const response = await api.put(`/products/${originalId.value}`, payload);
         const result = response.data;
 
         alert("✅ Product updated successfully!");
@@ -530,9 +502,7 @@ export default {
                   errors[key] = validationErrors[key][0];
                 }
               });
-              const errorMessages = Object.values(validationErrors)
-                .flat()
-                .join("\n");
+              const errorMessages = Object.values(validationErrors).flat().join("\n");
               alert(`❌ Validation Error:\n${errorMessages}`);
             }
           } else if (error.response.status === 500) {
@@ -547,9 +517,7 @@ export default {
               errors.name = "A product with this name already exists.";
               alert("❌ A product with this name already exists.");
             } else {
-              alert(
-                `❌ Server error: ${errorMessage || "Please try again later."}`,
-              );
+              alert(`❌ Server error: ${errorMessage || "Please try again later."}`);
             }
           } else {
             alert(
