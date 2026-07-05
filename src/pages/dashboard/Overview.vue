@@ -137,7 +137,6 @@
           </Transition>
         </div>
       </div>
-
       <!-- Top Menu Items -->
       <div class="card card-items">
         <div class="chart-head">

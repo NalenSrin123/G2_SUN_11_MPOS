@@ -86,7 +86,7 @@
             <img
               :src="order.image"
               :alt="order.items"
-              class="w-16 h-16 rounded-lg object-cover bg-gray-100 flex-shrink-0"
+              class="w-16 h-16 rounded-lg object-cover bg-gray-100 shrink-0"
             />
             <div class="flex-1 min-w-0">
               <p class="text-sm text-gray-800 leading-snug">
@@ -97,7 +97,7 @@
               </p>
             </div>
             <button
-              class="flex items-center justify-center gap-1 border border-emerald-200 text-emerald-600 text-sm font-medium px-3 py-2 rounded-lg hover:bg-emerald-50 transition flex-shrink-0"
+              class="flex items-center justify-center gap-1 border border-emerald-200 text-emerald-600 text-sm font-medium px-3 py-2 rounded-lg hover:bg-emerald-50 transition shrink-0"
               @click="$emit('reorder', order.id)"
             >
               <RefreshCwIcon class="w-3.5 h-3.5" />

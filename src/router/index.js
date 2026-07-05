@@ -22,27 +22,27 @@ import TableManagement from "@/pages/dashboard/teble_management.vue";
 import Overview from "@/pages/dashboard/Overview.vue";
 import InventoryList from "@/pages/dashboard/InventoryList.vue";
 import FromInventory from "../pages/dashboard/FromInventory.vue";
-import DesignPopularChoice from '../pages/home/DesignPopularChoice.vue'
-import Design_Payment_Page from '../pages/home/Payment_page.vue'
-import Design_History_Page from '../pages/home/Design_History_Page.vue'
-import MainMenu from '@/pages/home/main_menu.vue'
-import Cart from '@/pages/home/Design_listcartpage.vue'
-import Scan_To_pay from '../pages/home/home/Scan_To_pay.vue'
-import Product_Detail from '../pages/home/Product_Detail.vue'
+import DesignPopularChoice from "../pages/home/DesignPopularChoice.vue";
+import Design_Payment_Page from "../pages/home/Payment_page.vue";
+import Design_History_Page from "../pages/home/Design_History_Page.vue";
+import MainMenu from "@/pages/home/main_menu.vue";
+import Cart from "@/pages/home/Design_listcartpage.vue";
+import Scan_To_pay from "../pages/home/home/Scan_To_pay.vue";
+import Product_Detail from "../pages/home/Product_Detail.vue";
 function isAuthenticated() {
   return !!localStorage.getItem("auth_token");
 }
 const routes = [
   //Auth
   {
-    path:"/auth",
-    children:[
+    path: "/auth",
+    children: [
       { path: "/login", component: Login },
       { path: "/register", component: Register },
       { path: "/verify_otp", component: Verify_otp },
       { path: "/forgot_password", component: Forgot_Password },
       { path: "/reset_password", component: ResetPassword },
-    ]
+    ],
   },
   // Dashboard
   {
@@ -78,7 +78,7 @@ const routes = [
         component: UserSetting,
       },
       { path: "table_management", component: TableManagement },
-      { path: 'table_management', component: TableManagement },
+      { path: "table_management", component: TableManagement },
     ],
   },
 
@@ -106,28 +106,29 @@ const routes = [
   //   component: Design_New_Category,
   //   meta: { requiresAuth: false },
   // },
-//  Public
+  //  Public
   {
-    path:"/",
-    children:[
-      { path: '/jjjl', component: Home },
-      { path: '/product-detail', component: Product_Detail },
-      {path :'/payment-page' ,component:Design_Payment_Page},
+    path: "/",
+    children: [
+      { path: "/home", component: Home },
+      { path: "/product-detail", component: Product_Detail },
+      { path: "/payment-page", component: Design_Payment_Page },
 
-      { path: '/orderHistory', component: Design_History_Page },
-      { path: '/:pathMatch(.*)*', component: NotFound },
+      { path: "/orderHistory", component: Design_History_Page },
+      { path: "/:pathMatch(.*)*", component: NotFound },
       {
-        path: '/popularChoices',
-        component:DesignPopularChoice,
+        path: "/popularChoices",
+        component: DesignPopularChoice,
       },
-      { path: '/main-menu', component: MainMenu },
-      { path: '/cart', name: 'cart', component: Cart },
+      { path: "/main-menu", component: MainMenu },
+      { path: "/cart", name: "cart", component: Cart },
       {
-        path: '/scan-to-pay' , component: Scan_To_pay
+        path: "/scan-to-pay",
+        component: Scan_To_pay,
       },
-    ]
+    ],
   },
-]
+];
 /**
  * Router instance configuration
  */
