@@ -7,6 +7,13 @@
       @add="handleAddProduct"
     />
 
+    <Update_Product
+      v-else-if="showUpdateForm"
+      :product="selectedProduct"
+      @close="showUpdateForm = false"
+      @update="handleUpdateProduct"
+    />
+
     <!-- Product List — only shown when form is hidden -->
     <template v-else>
       <!-- Header -->
@@ -216,6 +223,7 @@
                       <Eye class="w-4 h-4" />
                     </button>
                     <button
+                      @click="editProduct(p)"
                       class="hover:text-emerald-500 transition-colors p-1"
                     >
                       <Pencil class="w-4 h-4" />
@@ -304,6 +312,7 @@
 
 <script setup>
 import { ref, computed, watch } from "vue";
+import { useRouter } from "vue-router";
 import {
   ClipboardList,
   TriangleAlert,
@@ -320,8 +329,12 @@ import {
   ScanBarcode,
 } from "lucide-vue-next";
 import AddProduct from "./AddProduct.vue";
+import Update_Product from "./Update_Product.vue";
 
+const router = useRouter();
 const showForm = ref(false);
+const showUpdateForm = ref(false);
+const selectedProduct = ref(null);
 const search = ref("");
 const page = ref(1);
 const itemsPerPage = 4;
@@ -474,6 +487,25 @@ const badge = (status) =>
 const handleAddProduct = (newProduct) => {
   products.value.push(newProduct);
   showForm.value = false;
+};
+
+const editProduct = (product) => {
+  selectedProduct.value = product;
+  showUpdateForm.value = true;
+};
+
+const handleUpdateProduct = (updatedProduct) => {
+  const index = products.value.findIndex(
+    (p) => p.sku === selectedProduct.value.sku,
+  );
+  if (index !== -1) {
+    products.value[index] = {
+      ...products.value[index],
+      ...updatedProduct,
+    };
+  }
+  showUpdateForm.value = false;
+  selectedProduct.value = null;
 };
 
 const deleteProduct = (sku) => {

@@ -126,7 +126,8 @@ const routes = [
         path: "/scan-to-pay",
         component: Scan_To_pay,
       },
-    ],
+      { path: '/update_product', component: Update_Product}
+    ]
   },
 ];
 /**
