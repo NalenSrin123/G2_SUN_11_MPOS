@@ -27,4 +27,14 @@ const api = axios.create({
   baseURL: 'https://g2-sun-11-mpos-back-1.onrender.com/api/v1',
 })
 
+export const deleteCategory = async (id) => {
+  try {
+    const response = await api.delete(`/categories/${id}`);
+    return response.data; 
+  } catch (error) {
+    console.error("Fail:", error);
+    throw error; 
+  }
+};
+
 export default api
