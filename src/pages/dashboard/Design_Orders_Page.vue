@@ -146,24 +146,83 @@
                 }}</span>
               </td>
               <td>
-                <button class="action-btn" @click="handleAction(order)">
-                  {{ order.status === "Delivered" ? "Receipt" : "Update" }}
-                </button>
+                <div class="actions-cell">
+                  <button class="action-btn" @click="handleAction(order)">
+                    {{ order.status === "Delivered" ? "Receipt" : "Update" }}
+                  </button>
+                  <button
+                    class="action-btn delete-btn"
+                    :disabled="deletingId === order.id"
+                    @click="handleDelete(order)"
+                  >
+                    {{ deletingId === order.id ? "Deleting..." : "Delete" }}
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
     </section>
+
+    <div v-if="orderToDelete" class="modal-backdrop" @click.self="closeDeleteModal">
+      <div class="delete-modal" role="dialog" aria-modal="true" aria-labelledby="delete-order-title">
+        <div class="modal-icon">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 6h18" />
+            <path d="M8 6V4h8v2" />
+            <path d="M19 6l-1 14H6L5 6" />
+            <path d="M10 11v5" />
+            <path d="M14 11v5" />
+          </svg>
+        </div>
+
+        <div>
+          <h2 id="delete-order-title" class="modal-title">Delete order?</h2>
+          <p class="modal-text">
+            {{ orderToDelete.id }} - {{ orderToDelete.customer }}
+          </p>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="modal-btn cancel-modal-btn"
+            :disabled="deletingId === orderToDelete.id"
+            @click="closeDeleteModal"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="modal-btn confirm-delete-btn"
+            :disabled="deletingId === orderToDelete.id"
+            @click="confirmDelete"
+          >
+            {{ deletingId === orderToDelete.id ? "Deleting..." : "Delete" }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { computed, ref } from "vue";
+import { deleteOrder } from "@/services/api";
 
 const searchQuery = ref("");
 const activeTab = ref("All");
 const tabs = ["All", "Pending", "Preparing", "Delivered"];
+const deletingId = ref(null);
+const orderToDelete = ref(null);
 
 const stats = [
   {
@@ -310,6 +369,32 @@ function statusClass(status) {
 
 function handleAction(order) {
   alert(`${order.id} - ${order.customer}`);
+}
+
+function handleDelete(order) {
+  orderToDelete.value = order;
+}
+
+function closeDeleteModal() {
+  if (deletingId.value) return;
+  orderToDelete.value = null;
+}
+
+async function confirmDelete() {
+  if (!orderToDelete.value) return;
+
+  const order = orderToDelete.value;
+  deletingId.value = order.id;
+
+  try {
+    await deleteOrder(order.id);
+  } catch (error) {
+    console.error("Delete order API failed:", error);
+  } finally {
+    orders.value = orders.value.filter((item) => item.id !== order.id);
+    orderToDelete.value = null;
+    deletingId.value = null;
+  }
 }
 </script>
 
@@ -669,6 +754,12 @@ tbody tr:hover td {
   font-weight: 800;
 }
 
+.actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .action-btn {
   height: 32px;
   border: 1px solid #cbd5e1;
@@ -690,6 +781,104 @@ tbody tr:hover td {
   background: #eff6ff;
   border-color: var(--brand);
   color: var(--brand);
+}
+
+.delete-btn {
+  border-color: #fecaca;
+  color: var(--red);
+}
+
+.delete-btn:hover:not(:disabled) {
+  background: #fef2f2;
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.action-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.42);
+}
+
+.delete-modal {
+  width: min(100%, 380px);
+  border-radius: 10px;
+  background: #fff;
+  padding: 22px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+}
+
+.modal-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: var(--red);
+  margin-bottom: 16px;
+}
+
+.modal-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.modal-title {
+  margin: 0;
+  color: #0f172a;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.modal-text {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.modal-btn {
+  height: 36px;
+  border-radius: 8px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.modal-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.cancel-modal-btn {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #334155;
+}
+
+.confirm-delete-btn {
+  border: 1px solid var(--red);
+  background: var(--red);
+  color: #fff;
 }
 
 .empty-row {

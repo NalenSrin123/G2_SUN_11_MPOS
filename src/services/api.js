@@ -47,4 +47,14 @@ export const updateCategory = async (id, payload) => {
   }
 };
 
+export const deleteOrder = async (id) => {
+  try {
+    const response = await api.delete(`/orders/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Delete order failed:", error);
+    throw error;
+  }
+};
+
 export default api
