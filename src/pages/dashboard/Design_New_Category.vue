@@ -6,7 +6,9 @@
       <div class="card-top">
         <div class="header-with-close">
           <div>
-            <h1 class="card-title">Create new category</h1>
+            <h1 class="card-title">
+              {{ isEditing ? "Edit category" : "Create new category" }}
+            </h1>
             <p class="card-subtitle">
               Define a menu category to organize your restaurant offerings and
               improve kitchen workflow.
@@ -121,7 +123,11 @@
             <polyline points="7 3 7 8 15 8" />
           </svg>
           <span class="btn-text">{{
-            loading ? "Saving..." : "Save category"
+            loading
+              ? "Saving..."
+              : isEditing
+                ? "Update category"
+                : "Save category"
           }}</span>
         </button>
       </div>
@@ -134,20 +140,46 @@
 
 <script>
 import api from "@/services/api";
+import { updateCategory } from "@/services/api";
 
 export default {
   name: "Design_New_Category",
 
-  emits: ["close", "add"],
+  props: {
+    category: {
+      type: Object,
+      default: null,
+    },
+  },
+
+  emits: ["close", "add", "update"],
 
   data() {
     return {
-      categoryName: "",
-      description: "",
-      isActive: true,
+      categoryName: this.category?.name || "",
+      description: this.category?.description || "",
+      isActive: this.category?.is_active ?? true,
       loading: false,
       error: null,
     };
+  },
+
+  computed: {
+    isEditing() {
+      return !!this.category?.id;
+    },
+  },
+
+  watch: {
+    category: {
+      immediate: true,
+      handler(nextCategory) {
+        this.categoryName = nextCategory?.name || "";
+        this.description = nextCategory?.description || "";
+        this.isActive = nextCategory?.is_active ?? true;
+        this.error = null;
+      },
+    },
   },
 
   methods: {
@@ -162,17 +194,22 @@ export default {
       this.error = null;
 
       try {
-        const { data } = await api.post("/categories", {
+        const payload = {
           name: this.categoryName.trim(),
           description: this.description.trim() || null,
           is_active: this.isActive,
-        });
+        };
 
-        this.$emit("add", data);
+        const { data } = this.isEditing
+          ? await updateCategory(this.category.id, payload)
+          : await api.post("/categories", payload);
+
+        this.$emit(this.isEditing ? "update" : "add", data);
         this.$emit("close");
       } catch (err) {
-        this.error =
-          err.response?.data?.message || "Failed to create category.";
+        this.error = err.response?.data?.message || `Failed to ${
+          this.isEditing ? "update" : "create"
+        } category.`;
       } finally {
         this.loading = false;
       }

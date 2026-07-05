@@ -1,9 +1,11 @@
 <template>
   <div class="min-h-screen font-sans">
     <div v-if="showForm">
-      <design_-new_-category
-        @close="showForm = false"
-        @add="handleAddProduct"
+      <Design_New_Category
+        :category="selectedCategory"
+        @close="closeForm"
+        @add="handleCategoryCreated"
+        @update="handleCategoryUpdated"
       />
     </div>
 
@@ -15,7 +17,10 @@
             Organize your restaurant offerings into logical groups for easier ordering and reporting.
           </p>
         </div>
-        <button @click="showForm = true" class="btn-primary w-full sm:w-auto justify-center sm:justify-start">
+        <button
+          @click="openCreateForm"
+          class="btn-primary w-full sm:w-auto justify-center sm:justify-start"
+        >
           <span class="text-lg">+</span> Create Category
         </button>
       </div>
@@ -133,28 +138,19 @@
                   </span>
                 </td>
 
-                <!-- Actions Dropdown -->
-                <td class="relative px-4 sm:px-5 py-3 sm:py-4 text-right">
-                  <button
-                    @click.stop="toggleMenu(cat.id)"
-                    class="p-2 rounded-lg hover:bg-slate-100 transition"
-                  >
-                    ⋮
-                  </button>
-
-                  <div
-                    v-if="activeMenu === cat.id"
-                    class="absolute right-5 mt-1 w-40 bg-white border border-slate-200 rounded-lg shadow-lg z-50"
-                  >
+                <td class="px-4 sm:px-5 py-3 sm:py-4 text-right">
+                  <div class="flex items-center justify-end gap-2">
                     <button
+                      type="button"
                       @click="editCategory(cat)"
-                      class="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 rounded-t-lg"
+                      class="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs sm:text-sm font-medium text-blue-700 hover:bg-blue-100 transition"
                     >
                       ✏️ Edit
                     </button>
                     <button
+                      type="button"
                       @click="handleDelete(cat.id)"
-                      class="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 rounded-b-lg"
+                      class="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs sm:text-sm font-medium text-red-600 hover:bg-red-100 transition"
                     >
                       🗑 Delete
                     </button>
@@ -241,9 +237,8 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted ,onBeforeUnmount} from "vue";
-import axios from "axios";
-import api from "@/services/api"; // Adjust the import path based on your project structure
+import { ref, computed, watch, onMounted } from "vue";
+import api, { deleteCategory } from "@/services/api";
 
 // Import Icons
 import {
@@ -281,18 +276,36 @@ const page = ref(1);
 const perPage = 5;
 const showFilter = ref(false);
 const searchQuery = ref("");
-const showForm   = ref(false);
-import { deleteCategory } from '../../services/api.js';
+const showForm = ref(false);
+const selectedCategory = ref(null);
+
+const closeForm = () => {
+  showForm.value = false;
+  selectedCategory.value = null;
+};
+
+const openCreateForm = () => {
+  selectedCategory.value = null;
+  showForm.value = true;
+};
+
+const refreshCategories = async () => {
+  await fetchCategories();
+};
+
 const handleDelete = async (id) => {
+  if (!window.confirm("Delete this category?")) return;
+
   try {
     await deleteCategory(id);
     categories.value = categories.value.filter((c) => c.id !== id);
     if (page.value > totalPages.value) page.value = totalPages.value;
-    activeMenu.value = null;
+    await refreshCategories();
   } catch (error) {
-    alert('Delete fail');
+    alert("Delete failed");
   }
-}
+};
+
 // 2. Network Endpoint Request Handling Logic
 const fetchCategories = async () => {
   isLoading.value = true;
@@ -313,14 +326,8 @@ const fetchCategories = async () => {
   }
 };
 
-// Mount component actions lifecycle 
+// Mount component actions lifecycle
 onMounted(() => {
-  fetchCategories();
-});
-
-// Watch state adjustments to handle queries
-watch(searchQuery, () => {
-  page.value = 1;
   fetchCategories();
 });
 
@@ -373,36 +380,27 @@ const visiblePages = computed(() => {
 // Watch to reset page when search changes
 watch(searchQuery, () => {
   page.value = 1;
+  fetchCategories();
 });
 
-// Function to handle adding a new category
-const handleAddProduct = (newCategory) => {
+const handleCategoryCreated = (newCategory) => {
   const cat = newCategory?.data ?? newCategory;
 
   if (!cat?.name) return;
 
-  categories.value.push({
-    name: cat.name,
-    icon: UtensilsCrossed,
-    description: cat.description || "New category added",
-    items: 0,
-    is_active: cat.is_active ?? true,
-  });
-  showForm.value = false;
+  closeForm();
+  fetchCategories();
 };
 
 const editCategory = (cat) => {
-  activeMenu.value = null;
-  // TODO: open your edit form/modal here and pass `cat`
-  console.log("Edit category:", cat);
+  selectedCategory.value = { ...cat };
+  showForm.value = true;
 };
 
-// const deleteCategory = (id) => {
-//   activeMenu.value = null;
-//   categories.value = categories.value.filter((c) => c.id !== id);
-//   // Clamp page if current page no longer exists
-//   if (page.value > totalPages.value) page.value = totalPages.value;
-// };
+const handleCategoryUpdated = () => {
+  closeForm();
+  fetchCategories();
+};
 </script>
 
 <style scoped>

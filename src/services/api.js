@@ -37,4 +37,14 @@ export const deleteCategory = async (id) => {
   }
 };
 
+export const updateCategory = async (id, payload) => {
+  try {
+    const response = await api.put(`/categories/${id}`, payload);
+    return response.data;
+  } catch (error) {
+    console.error("Update category failed:", error);
+    throw error;
+  }
+};
+
 export default api
