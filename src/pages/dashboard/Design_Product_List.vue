@@ -1,11 +1,7 @@
 <template>
   <div class="min-h-screen font-sans">
     <!-- Add Product Form — replaces the list entirely -->
-    <AddProduct
-      v-if="showForm"
-      @close="showForm = false"
-      @add="handleAddProduct"
-    />
+    <AddProduct v-if="showForm" @close="showForm = false" @add="handleAddProduct" />
 
     <Update_Product
       v-else-if="showUpdateForm"
@@ -17,13 +13,9 @@
     <!-- Product List — only shown when form is hidden -->
     <template v-else>
       <!-- Header -->
-      <div
-        class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6"
-      >
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
         <div>
-          <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">
-            Product List
-          </h1>
+          <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Product List</h1>
           <p class="text-xs sm:text-sm text-gray-400 mt-1">
             Manage and track your restaurant's food and beverage stock levels.
           </p>
@@ -45,9 +37,7 @@
             >
               <ClipboardList class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
             </div>
-            <span class="text-xs sm:text-sm font-semibold text-emerald-500"
-              >+4.2%</span
-            >
+            <span class="text-xs sm:text-sm font-semibold text-emerald-500">+4.2%</span>
           </div>
           <p
             class="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest font-medium"
@@ -66,9 +56,7 @@
             >
               <TriangleAlert class="w-4 h-4 sm:w-5 sm:h-5 text-red-700" />
             </div>
-            <span class="text-xs sm:text-sm font-semibold text-red-400"
-              >-2 today</span
-            >
+            <span class="text-xs sm:text-sm font-semibold text-red-400">-2 today</span>
           </div>
           <p
             class="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest font-medium"
@@ -202,10 +190,8 @@
                 >
                   {{ p.category }}
                 </td>
-                <td
-                  class="px-4 sm:px-5 py-3 sm:py-4 text-sm font-semibold text-gray-800"
-                >
-                  ${{ p.price.toFixed(2) }}
+                <td class="px-4 sm:px-5 py-3 sm:py-4 text-sm font-semibold text-gray-800">
+                  ${{ p.price }}
                 </td>
                 <td class="px-4 sm:px-5 py-3 sm:py-4 hidden md:table-cell">
                   <span
@@ -216,9 +202,7 @@
                   </span>
                 </td>
                 <td class="px-4 sm:px-5 py-3 sm:py-4 text-right">
-                  <div
-                    class="flex justify-end gap-2 sm:gap-3 text-sm text-gray-400"
-                  >
+                  <div class="flex justify-end gap-2 sm:gap-3 text-sm text-gray-400">
                     <button class="hover:text-blue-500 transition-colors p-1">
                       <Eye class="w-4 h-4" />
                     </button>
@@ -310,7 +294,7 @@
   </div>
 </template>
 <script setup>
-import api from '@/services/api.js';
+import api from "@/services/api.js";
 import { ref, computed, watch, onMounted } from "vue";
 import {
   ClipboardList,
@@ -329,7 +313,7 @@ import {
 } from "lucide-vue-next";
 import AddProduct from "./AddProduct.vue";
 import Update_Product from "./Update_Product.vue";
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 const showForm = ref(false);
@@ -339,10 +323,8 @@ const search = ref("");
 const page = ref(1);
 const itemsPerPage = 4;
 
-const products = ref([
-]);
+const products = ref([]);
 const fetchProducts = async () => {
-
   try {
     const res = await api.get("/products");
 
@@ -350,11 +332,10 @@ const fetchProducts = async () => {
 
     // support different backend formats
     products.value = res.data.data || res.data || [];
-
   } catch (error) {
     console.log(error);
     error.value = "Failed to load products";
-  } 
+  }
 };
 
 // ================= ON LOAD =================
@@ -362,7 +343,7 @@ onMounted(() => {
   fetchProducts();
 });
 const outOfStockCount = computed(
-  () => products.value.filter((p) => p.status === "OUT OF STOCK").length,
+  () => products.value.filter((p) => p.status === "OUT OF STOCK").length
 );
 
 const filtered = computed(() => {
@@ -371,12 +352,12 @@ const filtered = computed(() => {
     (p) =>
       p.name.toLowerCase().includes(q) ||
       p.sku.toLowerCase().includes(q) ||
-      p.category.toLowerCase().includes(q),
+      p.category.toLowerCase().includes(q)
   );
 });
 
 const totalPages = computed(() =>
-  Math.max(1, Math.ceil(filtered.value.length / itemsPerPage)),
+  Math.max(1, Math.ceil(filtered.value.length / itemsPerPage))
 );
 
 const paginated = computed(() => {
@@ -393,10 +374,10 @@ const badge = (status) =>
     "IN STOCK": "bg-emerald-200 text-emerald-700",
     "LOW STOCK": "bg-orange-200 text-red-600",
     "OUT OF STOCK": "bg-red-200 text-red-500",
-  })[status] ?? "bg-gray-100 text-gray-500";
+  }[status] ?? "bg-gray-100 text-gray-500");
 
 const handleAddProduct = (newProduct) => {
-  products.value.push(newProduct);
+  products.value.unshift(newProduct);
   showForm.value = false;
 };
 
@@ -406,9 +387,7 @@ const editProduct = (product) => {
 };
 
 const handleUpdateProduct = (updatedProduct) => {
-  const index = products.value.findIndex(
-    (p) => p.sku === selectedProduct.value.sku,
-  );
+  const index = products.value.findIndex((p) => p.sku === selectedProduct.value.sku);
   if (index !== -1) {
     products.value[index] = {
       ...products.value[index],

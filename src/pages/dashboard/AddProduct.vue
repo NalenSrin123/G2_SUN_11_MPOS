@@ -4,21 +4,6 @@
     <div class="mb-7">
       <div class="flex flex-wrap items-center justify-between gap-3 mb-1">
         <div class="flex items-center gap-3 min-w-0">
-          <!-- <button
-            @click="$emit('close')"
-            class="flex items-center gap-1.5 text-[#1060FE] text-sm font-medium hover:underline whitespace-nowrap shrink-0"
-          >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              viewBox="0 0 24 24"
-            >
-              <path d="M19 12H5M5 12l7-7M5 12l7 7" />
-            </svg>
-            Back to List
-          </button> -->
           <h1 class="text-xl sm:text-2xl font-bold text-gray-900 truncate">
             Add New Product
           </h1>
@@ -49,11 +34,7 @@
                 stroke="currentColor"
                 stroke-width="4"
               />
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v8H4z"
-              />
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
             </svg>
             {{ saving ? "Saving..." : "Save Product" }}
           </button>
@@ -62,16 +43,12 @@
     </div>
 
     <!-- Body -->
-    <div
-      class="flex flex-col lg:grid lg:grid-cols-[1fr_300px] gap-5 items-start"
-    >
+    <div class="flex flex-col lg:grid lg:grid-cols-[1fr_300px] gap-5 items-start">
       <!-- Left Column -->
       <div class="flex flex-col gap-5 w-full">
         <!-- General Information -->
         <div class="bg-white rounded-2xl border border-gray-200 p-5 sm:p-7">
-          <h2 class="text-base font-bold text-gray-900 mb-6">
-            General Information
-          </h2>
+          <h2 class="text-base font-bold text-gray-900 mb-6">General Information</h2>
 
           <div class="mb-5">
             <label class="block text-xs font-semibold text-gray-600 mb-1.5"
@@ -80,6 +57,7 @@
             <input
               v-model="form.name"
               type="text"
+              maxlength="255"
               placeholder="e.g. Wagyu Beef Burger"
               class="w-full px-3.5 py-2.5 text-sm border rounded-lg outline-none transition-all placeholder-gray-300"
               :class="
@@ -110,26 +88,35 @@
               >Category</label
             >
             <div class="relative">
+              <div
+                v-if="loadingCategories"
+                class="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50 text-gray-400"
+              >
+                Loading categories...
+              </div>
+
               <select
-                v-model="form.category"
+                v-else
+                v-model="form.category_id"
                 class="w-full px-3.5 py-2.5 text-sm border rounded-lg outline-none appearance-none transition-all cursor-pointer pr-9"
                 :class="[
-                  errors.category
+                  errors.category_id
                     ? 'border-red-400 focus:ring-2 focus:ring-red-100'
                     : 'border-gray-200 focus:border-[#1060FE] focus:ring-2 focus:ring-blue-100',
-                  form.category ? 'text-gray-900' : 'text-gray-400',
+                  form.category_id ? 'text-gray-900' : 'text-gray-400',
                 ]"
               >
                 <option value="" disabled>Select Category</option>
                 <option
                   v-for="cat in categories"
-                  :key="cat"
-                  :value="cat"
+                  :key="cat.id"
+                  :value="cat.id"
                   class="text-gray-900"
                 >
-                  {{ cat }}
+                  {{ cat.name }}
                 </option>
               </select>
+
               <svg
                 class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
                 fill="none"
@@ -140,29 +127,21 @@
                 <path d="M6 9l6 6 6-6" />
               </svg>
             </div>
-            <p v-if="errors.category" class="mt-1 text-xs text-red-500">
-              {{ errors.category }}
+            <p v-if="errors.category_id" class="mt-1 text-xs text-red-500">
+              {{ errors.category_id }}
             </p>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1.5"
-              >SKU</label
+            <p
+              v-if="categories.length === 0 && !loadingCategories"
+              class="mt-1 text-xs text-amber-600"
             >
-            <input
-              v-model="form.sku"
-              type="text"
-              placeholder="RP-00123"
-              class="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-lg outline-none transition-all placeholder-gray-300 focus:border-[#1060FE] focus:ring-2 focus:ring-blue-100"
-            />
+              ⚠️ No categories available. Please add categories first.
+            </p>
           </div>
         </div>
 
         <!-- Inventory Settings -->
         <div class="bg-white rounded-2xl border border-gray-200 p-5 sm:p-7">
-          <h2
-            class="flex items-center gap-2 text-base font-bold text-gray-900 mb-6"
-          >
+          <h2 class="flex items-center gap-2 text-base font-bold text-gray-900 mb-6">
             <svg
               class="w-[18px] h-[18px] text-[#1060FE] shrink-0"
               fill="none"
@@ -178,49 +157,34 @@
             Inventory Settings
           </h2>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1.5"
-                >Stock Quantity</label
-              >
-              <div
-                class="flex border border-gray-200 rounded-lg overflow-hidden focus-within:border-[#1060FE] focus-within:ring-2 focus-within:ring-blue-100 transition-all"
-              >
-                <input
-                  v-model.number="form.stock"
-                  type="number"
-                  min="0"
-                  class="flex-1 min-w-0 px-3.5 py-2.5 text-sm outline-none"
-                />
-                <div class="flex flex-col border-l border-gray-200 shrink-0">
-                  <button
-                    @click="form.stock++"
-                    class="flex-1 px-2.5 bg-gray-50 hover:bg-blue-50 hover:text-[#1060FE] text-gray-400 text-[9px] transition-colors"
-                  >
-                    ▲
-                  </button>
-                  <button
-                    @click="form.stock = Math.max(0, form.stock - 1)"
-                    class="flex-1 px-2.5 bg-gray-50 hover:bg-blue-50 hover:text-[#1060FE] text-gray-400 text-[9px] border-t border-gray-200 transition-colors"
-                  >
-                    ▼
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1.5"
-                >Low Stock Alert Threshold</label
-              >
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1.5"
+              >Stock Quantity</label
+            >
+            <div
+              class="flex border border-gray-200 rounded-lg overflow-hidden focus-within:border-[#1060FE] focus-within:ring-2 focus-within:ring-blue-100 transition-all"
+            >
               <input
-                v-model.number="form.threshold"
+                v-model.number="form.stock"
                 type="number"
                 min="0"
-                class="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-lg outline-none transition-all focus:border-[#1060FE] focus:ring-2 focus:ring-blue-100"
+                max="999999"
+                class="flex-1 min-w-0 px-3.5 py-2.5 text-sm outline-none"
               />
-              <p class="mt-1.5 text-xs text-gray-400">
-                We'll notify you when stock falls below this level.
-              </p>
+              <div class="flex flex-col border-l border-gray-200 shrink-0">
+                <button
+                  @click="form.stock = Math.min(999999, (Number(form.stock) || 0) + 1)"
+                  class="flex-1 px-2.5 bg-gray-50 hover:bg-blue-50 hover:text-[#1060FE] text-gray-400 text-[9px] transition-colors"
+                >
+                  ▲
+                </button>
+                <button
+                  @click="form.stock = Math.max(0, (Number(form.stock) || 0) - 1)"
+                  class="flex-1 px-2.5 bg-gray-50 hover:bg-blue-50 hover:text-[#1060FE] text-gray-400 text-[9px] border-t border-gray-200 transition-colors"
+                >
+                  ▼
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -228,69 +192,40 @@
 
       <!-- Right Column -->
       <div class="flex flex-col gap-5 w-full">
-        <!-- Product Image -->
+        <!-- Product Image URL -->
         <div class="bg-white rounded-2xl border border-gray-200 p-5 sm:p-7">
           <h2 class="text-base font-bold text-gray-900 mb-4">Product Image</h2>
-          <div
-            @dragover.prevent="isDragging = true"
-            @dragleave="isDragging = false"
-            @drop.prevent="handleDrop"
-            @click="$refs.fileInput.click()"
-            class="relative rounded-xl border-2 border-dashed min-h-[180px] lg:min-h-[480px] flex items-center justify-center cursor-pointer overflow-hidden transition-all"
-            :class="
-              isDragging
-                ? 'border-[#1060FE] bg-blue-50'
-                : 'border-gray-200 hover:border-[#1060FE] hover:bg-blue-50/40'
-            "
-          >
-            <img
-              v-if="imagePreview"
-              :src="imagePreview"
-              class="w-full h-[180px] lg:h-[480px] object-cover"
-            />
-            <div v-else class="text-center p-6">
-              <div
-                class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-3"
-              >
-                <svg
-                  class="w-6 h-6 text-[#1060FE]"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  viewBox="0 0 24 24"
-                >
-                  <polyline points="16 16 12 12 8 16" />
-                  <line x1="12" y1="12" x2="12" y2="21" />
-                  <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3" />
-                </svg>
-              </div>
-              <p class="text-sm font-semibold text-gray-800 mb-1">
-                Click or drag to upload
-              </p>
-              <p class="text-xs text-gray-400">PNG, JPG or WEBP (Max 5MB)</p>
-            </div>
+          <div class="mb-4">
+            <label class="block text-xs font-semibold text-gray-600 mb-1.5"
+              >Image URL</label
+            >
             <input
-              ref="fileInput"
-              type="file"
-              accept="image/*"
-              @change="handleFile"
-              class="hidden"
+              v-model="form.image"
+              type="url"
+              placeholder="https://example.com/image.jpg"
+              class="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-lg outline-none transition-all focus:border-[#1060FE] focus:ring-2 focus:ring-blue-100"
             />
           </div>
-          <button
-            v-if="imagePreview"
-            @click="imagePreview = null"
-            class="mt-3 w-full py-2 text-xs font-medium text-red-500 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+
+          <div
+            v-if="form.image"
+            class="relative rounded-xl border border-gray-200 overflow-hidden"
           >
-            Remove Image
-          </button>
+            <img
+              :src="form.image"
+              class="w-full h-[180px] lg:h-[280px] object-cover"
+              alt="Product preview"
+              @error="form.image = ''"
+            />
+          </div>
+          <p v-else class="text-xs text-gray-400 text-center py-8">
+            Enter image URL above to preview
+          </p>
         </div>
 
         <!-- Price -->
         <div class="bg-white rounded-2xl border border-gray-200 p-5 sm:p-7">
-          <label class="block text-xs font-semibold text-gray-600 mb-1.5"
-            >Price</label
-          >
+          <label class="block text-xs font-semibold text-gray-600 mb-1.5">Price</label>
           <div
             class="flex items-center border rounded-lg overflow-hidden transition-all"
             :class="
@@ -307,6 +242,7 @@
               v-model="form.price"
               type="number"
               min="0"
+              max="999999.99"
               step="0.01"
               placeholder="0.00"
               class="flex-1 min-w-0 px-3.5 py-2.5 text-sm outline-none placeholder-gray-300"
@@ -315,6 +251,105 @@
           <p v-if="errors.price" class="mt-1 text-xs text-red-500">
             {{ errors.price }}
           </p>
+          <p class="mt-1 text-xs text-gray-400">Maximum price: $999,999.99</p>
+        </div>
+
+        <!-- Active Status -->
+        <div class="bg-white rounded-2xl border border-gray-200 p-5 sm:p-7">
+          <label class="block text-xs font-semibold text-gray-600 mb-1.5">Status</label>
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-sm font-medium text-gray-700">Active Product</span>
+              <p class="text-xs text-gray-400">Visible to customers</p>
+            </div>
+            <button
+              @click="form.is_active = !form.is_active"
+              :class="[
+                'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none',
+                form.is_active ? 'bg-[#1060FE]' : 'bg-gray-300',
+              ]"
+            >
+              <span
+                :class="[
+                  'inline-block h-5 w-5 transform rounded-full bg-white transition-transform',
+                  form.is_active ? 'translate-x-6' : 'translate-x-1',
+                ]"
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ Modal -->
+    <div
+      v-if="modal.show"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      @click.self="closeModal"
+    >
+      <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+        <div class="text-center">
+          <!-- Icon -->
+          <div
+            class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+            :class="{
+              'bg-green-100': modal.type === 'success',
+              'bg-red-100': modal.type === 'error',
+              'bg-yellow-100': modal.type === 'warning',
+            }"
+          >
+            <svg
+              v-if="modal.type === 'success'"
+              class="w-8 h-8 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <svg
+              v-else-if="modal.type === 'error'"
+              class="w-8 h-8 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 8v4M12 16h.01" stroke-linecap="round" />
+            </svg>
+            <svg
+              v-else
+              class="w-8 h-8 text-yellow-600"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 9v2M12 15h.01M12 12h.01" stroke-linecap="round" />
+              <circle cx="12" cy="12" r="10" />
+            </svg>
+          </div>
+
+          <!-- Title & Message -->
+          <h3 class="text-lg font-bold text-gray-900 mb-2">{{ modal.title }}</h3>
+          <p class="text-sm text-gray-600 whitespace-pre-line">{{ modal.message }}</p>
+
+          <!-- Button -->
+          <div class="mt-6">
+            <button
+              @click="handleModalConfirm"
+              class="w-full px-4 py-2.5 text-sm font-semibold text-white rounded-lg transition-colors"
+              :class="{
+                'bg-[#1060FE] hover:bg-blue-700': modal.type === 'success',
+                'bg-red-500 hover:bg-red-600': modal.type === 'error',
+                'bg-yellow-500 hover:bg-yellow-600': modal.type === 'warning',
+              }"
+            >
+              {{ modal.buttonText || "OK" }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -322,83 +357,350 @@
 </template>
 
 <script>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted, nextTick } from "vue";
+import { useRouter } from "vue-router";
+import api from "../../services/api";
 
 export default {
   name: "AddNewProduct",
   emits: ["close", "add"],
   setup(props, { emit }) {
+    const router = useRouter();
     const saving = ref(false);
-    const isDragging = ref(false);
-    const imagePreview = ref(null);
-    const fileInput = ref(null);
-    const categories = [
-      "Burgers",
-      "Beverages",
-      "Sides",
-      "Desserts",
-      "Salads",
-      "Specials",
-    ];
+    const categories = ref([]);
+    const loadingCategories = ref(true);
+
+    // ✅ Modal
+    const modal = reactive({
+      show: false,
+      type: "",
+      title: "",
+      message: "",
+      buttonText: "OK",
+      onConfirm: null,
+    });
+
     const form = reactive({
       name: "",
       description: "",
-      category: "",
-      sku: "",
+      category_id: "",
+      price: "",
       stock: 0,
-      threshold: 5,
+      image: "",
+      is_active: true,
+    });
+
+    const errors = reactive({
+      name: "",
+      category_id: "",
       price: "",
     });
-    const errors = reactive({ name: "", category: "", price: "" });
 
+    // ============================================
+    // MODAL HELPERS
+    // ============================================
+    const showModal = ({ type, title, message, buttonText = "OK", onConfirm = null }) => {
+      modal.show = true;
+      modal.type = type;
+      modal.title = title;
+      modal.message = message;
+      modal.buttonText = buttonText;
+      modal.onConfirm = onConfirm;
+    };
+
+    const closeModal = () => {
+      modal.show = false;
+      modal.onConfirm = null;
+    };
+
+    const handleModalConfirm = () => {
+      if (modal.onConfirm) {
+        modal.onConfirm();
+      }
+      closeModal();
+    };
+
+    // ============================================
+    // FETCH CATEGORIES
+    // ============================================
+    onMounted(async () => {
+      await fetchCategories();
+    });
+
+    async function fetchCategories() {
+      loadingCategories.value = true;
+      try {
+        const response = await api.get("/categories");
+        let categoriesData = [];
+
+        if (Array.isArray(response.data)) {
+          categoriesData = response.data;
+        } else if (response.data && Array.isArray(response.data.data)) {
+          categoriesData = response.data.data;
+        } else if (response.data && Array.isArray(response.data.categories)) {
+          categoriesData = response.data.categories;
+        } else if (response.data && Array.isArray(response.data.results)) {
+          categoriesData = response.data.results;
+        } else if (response.data && typeof response.data === "object") {
+          for (const key in response.data) {
+            if (Array.isArray(response.data[key]) && response.data[key].length > 0) {
+              if (
+                response.data[key][0] &&
+                response.data[key][0].id != null &&
+                response.data[key][0].name
+              ) {
+                categoriesData = response.data[key];
+                break;
+              }
+            }
+          }
+        }
+
+        categories.value = categoriesData
+          .filter((cat) => cat && cat.id != null && cat.name)
+          .map((cat) => ({ ...cat, id: Number(cat.id) }));
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        categories.value = [];
+      } finally {
+        loadingCategories.value = false;
+      }
+    }
+
+    // ============================================
+    // VALIDATION
+    // ============================================
     function validate() {
-      errors.name = form.name.trim() ? "" : "Product name is required.";
-      errors.category = form.category ? "" : "Please select a category.";
-      errors.price =
-        form.price !== "" && Number(form.price) >= 0
-          ? ""
-          : "Please enter a valid price.";
-      return !errors.name && !errors.category && !errors.price;
+      errors.name = "";
+      errors.category_id = "";
+      errors.price = "";
+
+      if (!form.name.trim()) {
+        errors.name = "Product name is required.";
+      } else if (form.name.trim().length > 255) {
+        errors.name = "Product name cannot exceed 255 characters.";
+      }
+
+      if (
+        form.category_id === "" ||
+        form.category_id === null ||
+        form.category_id === undefined
+      ) {
+        errors.category_id = "Please select a category.";
+      }
+
+      const priceStr = String(form.price ?? "").trim();
+      const priceValue = parseFloat(priceStr);
+
+      if (priceStr === "" || isNaN(priceValue) || priceValue < 0) {
+        errors.price = "Please enter a valid price.";
+      } else if (priceValue > 999999.99) {
+        errors.price = "Price cannot exceed $999,999.99.";
+      } else if (priceStr.includes(".") && priceStr.split(".")[1]?.length > 2) {
+        errors.price = "Price can only have up to 2 decimal places.";
+      }
+
+      return !(errors.name || errors.category_id || errors.price);
     }
 
+    // ============================================
+    // NAVIGATE TO PRODUCT LIST - FIXED ✅
+    // ============================================
+    function goToProductList() {
+      try {
+        // ✅ ប្រើ Route name តាម Router របស់អ្នក
+        router.push({ name: "dashboard-product" }).catch((e) => {
+          console.error("Navigation by name failed:", e);
+          // Fallback: ប្រើ path
+          router.push("/dashboard/product").catch((e2) => {
+            console.error("Navigation by path failed:", e2);
+            window.location.href = "/dashboard/product";
+          });
+        });
+      } catch (e) {
+        console.error("Navigation exception:", e);
+        window.location.href = "/dashboard/product";
+      }
+    }
+
+    // ============================================
+    // SAVE PRODUCT
+    // ============================================
     async function handleSave() {
-      if (!validate()) return;
+      if (saving.value) return;
+
+      if (!loadingCategories.value && categories.value.length === 0) {
+        showModal({
+          type: "warning",
+          title: "No Categories Available",
+          message: "Please add categories first before creating a product.",
+          buttonText: "OK",
+        });
+        return;
+      }
+
+      if (!validate()) {
+        await nextTick();
+        const firstError = document.querySelector(".border-red-400");
+        if (firstError) {
+          firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        return;
+      }
+
       saving.value = true;
-      await new Promise((r) => setTimeout(r, 1200));
-      saving.value = false;
-      emit("add", { ...form, image: imagePreview.value });
+
+      try {
+        const payload = {
+          name: form.name.trim(),
+          description: form.description?.trim() || null,
+          category_id: Number(form.category_id),
+          price: parseFloat(form.price),
+          stock: Number(form.stock) || 0,
+          image: form.image?.trim() || null,
+          is_active: !!form.is_active,
+        };
+
+        const response = await api.post("/products", payload, { timeout: 15000 });
+        const result = response.data;
+
+        saving.value = false;
+
+        // ✅ Show success modal
+        showModal({
+          type: "success",
+          title: "✅ Product Created!",
+          message: "Product has been created successfully.",
+          buttonText: "Go to Product List",
+          onConfirm: () => {
+            // Emit events
+            emit("add", result);
+            resetForm();
+            emit("close");
+
+            // Navigate to product list
+            setTimeout(() => {
+              goToProductList();
+            }, 100);
+          },
+        });
+      } catch (error) {
+        saving.value = false;
+        handleSaveError(error);
+      }
     }
 
-    function handleCancel() {
+    // ============================================
+    // ERROR HANDLING
+    // ============================================
+    function handleSaveError(error) {
+      console.error("Error creating product:", error);
+
+      if (!error.response) {
+        showModal({
+          type: "error",
+          title: "Network Error",
+          message: error.request
+            ? "Please check your internet connection."
+            : "Failed to create product. Please try again.",
+          buttonText: "OK",
+        });
+        return;
+      }
+
+      const { status, data } = error.response;
+
+      if (status === 422) {
+        const validationErrors = data?.errors;
+        if (validationErrors && typeof validationErrors === "object") {
+          Object.keys(validationErrors).forEach((key) => {
+            if (Object.prototype.hasOwnProperty.call(errors, key)) {
+              const messages = validationErrors[key];
+              errors[key] = Array.isArray(messages) ? messages[0] : String(messages);
+            }
+          });
+          const errorMessages = Object.values(validationErrors).flat().join("\n");
+          showModal({
+            type: "error",
+            title: "Validation Error",
+            message: errorMessages,
+            buttonText: "OK",
+          });
+        } else {
+          showModal({
+            type: "error",
+            title: "Validation Error",
+            message: data?.message || "Please check your input.",
+            buttonText: "OK",
+          });
+        }
+        return;
+      }
+
+      if (status === 500) {
+        const errorMessage = data?.message || "";
+        if (errorMessage.includes("Numeric value out of range")) {
+          errors.price = "Price is too high. Maximum value is $999,999.99.";
+          showModal({
+            type: "error",
+            title: "Price Error",
+            message: "Price is too high. Maximum value is $999,999.99.",
+            buttonText: "OK",
+          });
+        } else if (
+          errorMessage.includes("Duplicate entry") ||
+          errorMessage.includes("unique")
+        ) {
+          errors.name = "A product with this name already exists.";
+          showModal({
+            type: "error",
+            title: "Duplicate Product",
+            message:
+              "A product with this name already exists. Please use a different name.",
+            buttonText: "OK",
+          });
+        } else {
+          showModal({
+            type: "error",
+            title: "Server Error",
+            message: errorMessage || "Please try again later.",
+            buttonText: "OK",
+          });
+        }
+        return;
+      }
+
+      showModal({
+        type: "error",
+        title: "Failed to Create Product",
+        message: data?.message || "Please try again.",
+        buttonText: "OK",
+      });
+    }
+
+    // ============================================
+    // RESET FORM
+    // ============================================
+    function resetForm() {
       Object.assign(form, {
         name: "",
         description: "",
-        category: "",
-        sku: "",
+        category_id: "",
+        price: "",
         stock: 0,
-        threshold: 5,
+        image: "",
+        is_active: true,
+      });
+      Object.assign(errors, {
+        name: "",
+        category_id: "",
         price: "",
       });
-      imagePreview.value = null;
-      Object.assign(errors, { name: "", category: "", price: "" });
-      emit("close");
     }
 
-    function handleFile(e) {
-      const f = e.target.files[0];
-      if (f) loadImage(f);
-    }
-    function handleDrop(e) {
-      isDragging.value = false;
-      const f = e.dataTransfer.files[0];
-      if (f?.type.startsWith("image/")) loadImage(f);
-    }
-    function loadImage(file) {
-      const r = new FileReader();
-      r.onload = (e) => {
-        imagePreview.value = e.target.result;
-      };
-      r.readAsDataURL(file);
+    function handleCancel() {
+      resetForm();
+      emit("close");
     }
 
     return {
@@ -406,13 +708,13 @@ export default {
       errors,
       categories,
       saving,
-      isDragging,
-      imagePreview,
-      fileInput,
+      loadingCategories,
+      modal,
       handleSave,
       handleCancel,
-      handleFile,
-      handleDrop,
+      closeModal,
+      handleModalConfirm,
+      fetchCategories,
     };
   },
 };
