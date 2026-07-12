@@ -19,6 +19,7 @@
 
 import axios from 'axios'
 
+
 /**
  * Axios instance
  * Used for all API requests in the application
