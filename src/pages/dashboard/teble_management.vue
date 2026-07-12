@@ -2,8 +2,7 @@
   <DesignPageCreateTable
     v-if="showForm"
     @back="showForm = false"
-    @submit="handleCreateTable"
-  />
+    @submit="handleCreateTable" />
   <div v-else class="tm-root">
     <!-- Header -->
     <div class="tm-header">
@@ -38,8 +37,7 @@
           v-for="tab in tabs"
           :key="tab"
           :class="['tm-tab', { active: activeTab === tab }]"
-          @click="activeTab = tab"
-        >
+          @click="activeTab = tab">
           {{ tab }}
         </button>
       </div>
@@ -92,8 +90,7 @@
                     height="20"
                     width="20"
                     viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
+                    fill="currentColor">
                     <path d="M12 3l9 7h-3v9h-5v-6H11v6H6v-9H3l9-7z" />
                   </svg>
                   <svg
@@ -102,28 +99,40 @@
                     height="20px"
                     viewBox="0 -960 960 960"
                     width="20px"
-                    fill="#000000"
-                  >
+                    fill="#000000">
                     <path
-                      d="M480-144v-432q-10.69-10.8-26.35-17.4Q438-600 421-600t-33.03 6.3Q371.95-587.4 361-576h-96q5-101 77-170.5T516-816q102 0 174 69.5T767-576h-96q-10.95-11.4-26.97-17.7Q628-600 611-600t-32.65 6.6Q562.69-586.8 552-576v432h-72Zm24-504h25q18-11 39.07-17.5T612-672q14.09 0 27.55 2.5Q653-667 666-662q-24-37-63-59.5T516-744q-48 0-87 22.5T366-662q13-5 26.45-7.5Q405.91-672 420-672q23.21 0 44.6 6.5Q486-659 504-648Zm120 504v-216h216v216h-72v-144h-72v144h-72Zm-444 0v-98q-17.18-4.34-28.64-16.49Q139.91-270.64 138-288L96-624h25q20.32 0 35.77 13.67Q172.23-596.65 174-577l27 217h135q33 0 52.5 19.5T408-288v48h-48v96h-48v-96h-84v96h-48Zm336-504Z"
-                    />
+                      d="M480-144v-432q-10.69-10.8-26.35-17.4Q438-600 421-600t-33.03 6.3Q371.95-587.4 361-576h-96q5-101 77-170.5T516-816q102 0 174 69.5T767-576h-96q-10.95-11.4-26.97-17.7Q628-600 611-600t-32.65 6.6Q562.69-586.8 552-576v432h-72Zm24-504h25q18-11 39.07-17.5T612-672q14.09 0 27.55 2.5Q653-667 666-662q-24-37-63-59.5T516-744q-48 0-87 22.5T366-662q13-5 26.45-7.5Q405.91-672 420-672q23.21 0 44.6 6.5Q486-659 504-648Zm120 504v-216h216v216h-72v-144h-72v144h-72Zm-444 0v-98q-17.18-4.34-28.64-16.49Q139.91-270.64 138-288L96-624h25q20.32 0 35.77 13.67Q172.23-596.65 174-577l27 217h135q33 0 52.5 19.5T408-288v48h-48v96h-48v-96h-84v96h-48Zm336-504Z" />
                   </svg>
                 </span>
                 {{ row.location }}
               </span>
             </td>
             <td class="td-actions">
+              <!-- Delete Button -->
+              <button
+                class="action-btn delete-btn"
+                title="Delete"
+                @click="deleteTable(row.id)">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="#ef4444">
+                  <path
+                    d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360Z" />
+                </svg>
+              </button>
+              <!-- Edit Button -->
               <button class="action-btn" title="Edit">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="20px"
                   viewBox="0 -960 960 960"
                   width="20px"
-                  fill="#000000"
-                >
+                  fill="#000000">
                   <path
-                    d="M216-216h51l375-375-51-51-375 375v51Zm-72 72v-153l498-498q11-11 23.84-16 12.83-5 27-5 14.16 0 27.16 5t24 16l51 51q11 11 16 24t5 26.54q0 14.45-5.02 27.54T795-642L297-144H144Zm600-549-51-51 51 51Zm-127.95 76.95L591-642l51 51-25.95-25.05Z"
-                  />
+                    d="M216-216h51l375-375-51-51-375 375v51Zm-72 72v-153l498-498q11-11 23.84-16 12.83-5 27-5 14.16 0 27.16 5t24 16l51 51q11 11 16 24t5 26.54q0 14.45-5.02 27.54T795-642L297-144H144Zm600-549-51-51 51 51Zm-127.95 76.95L591-642l51 51-25.95-25.05Z" />
                 </svg>
               </button>
               <button class="action-btn" title="More">⋮</button>
@@ -273,7 +282,7 @@ const stats = [
 
 const filteredTables = computed(() => {
   if (activeTab.value === "All") return allTables.value;
-  return allTables.value.filter((t) => t.location === activeTab.value);
+  return allTables.value.filter(t => t.location === activeTab.value);
 });
 
 const totalPages = computed(() =>
@@ -290,6 +299,16 @@ const showingRange = computed(() => {
   return `${start}–${end}`;
 });
 
+// Delete Function
+const deleteTable = (id) => {
+  if (confirm(`Are you sure you want to delete table ${id}? This action cannot be undone.`)) {
+    const index = allTables.value.findIndex(table => table.id === id);
+    if (index !== -1) {
+      allTables.value.splice(index, 1);
+    }
+  }
+};
+
 function prevPage() {
   if (page.value > 1) page.value--;
 }
@@ -300,8 +319,8 @@ function loadMore() {
   if (page.value < totalPages.value) page.value++;
 }
 
-const handleCreateTable = (newTable) => {
-  const existingIds = allTables.value.map((t) => parseInt(t.id.substring(1)));
+const handleCreateTable = newTable => {
+  const existingIds = allTables.value.map(t => parseInt(t.id.substring(1)));
   const maxId = Math.max(...existingIds, 0);
   const nextIdNumber = maxId + 1;
   const nextId = `T${nextIdNumber.toString().padStart(2, "0")}`;
@@ -624,6 +643,9 @@ const handleCreateTable = (newTable) => {
 
 .td-actions {
   text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.25rem;
 }
 .action-btn {
   background: none;
@@ -641,6 +663,15 @@ const handleCreateTable = (newTable) => {
 .action-btn:hover {
   color: #555;
   background: #f0f0ea;
+}
+
+/* Delete Button Style */
+.delete-btn {
+  color: #ef4444;
+}
+.delete-btn:hover {
+  color: #dc2626;
+  background: #fee2e2;
 }
 
 /* ── Load More ── */

@@ -47,4 +47,14 @@ export const updateCategory = async (id, payload) => {
   }
 };
 
+export const deleteTable = async (id) => {
+  try {
+    const response = await api.delete(`/tables/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Delete table failed:", error);
+    throw error;
+  }
+};
+
 export default api
