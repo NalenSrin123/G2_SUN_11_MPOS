@@ -27,7 +27,7 @@ import axios from 'axios'
 const api = axios.create({
   baseURL: 'https://g2-sun-11-mpos-back.onrender.com/api/v1',
 })
-
+// delete category
 export const deleteCategory = async (id) => {
   try {
     const response = await api.delete(`/categories/${id}`);
@@ -37,6 +37,16 @@ export const deleteCategory = async (id) => {
     throw error; 
   }
 };
+// get order
+export const getOrders = async () => {
+  try {
+    const response = await api.get('/orders');
+    return response.data;
+  } catch (error) {
+    console.log("Get Orders Fail:", error);
+    throw error;
+  }
+}
 
 export const updateCategory = async (id, payload) => {
   try {
