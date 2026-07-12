@@ -17,6 +17,7 @@
         <span class="btn-icon">⊕</span> Create Table
       </button>
     </div>
+
     <!-- Stat Cards -->
     <div class="tm-stats">
       <div class="stat-card" v-for="stat in stats" :key="stat.label">
@@ -33,19 +34,9 @@
 
     <!-- Filters -->
     <div class="tm-filters-bar">
-      <div class="tm-tabs">
-        <button
-          v-for="tab in tabs"
-          :key="tab"
-          :class="['tm-tab', { active: activeTab === tab }]"
-          @click="activeTab = tab"
-        >
-          {{ tab }}
-        </button>
-      </div>
       <button class="tm-filter-btn"><span>⇅</span> Filters</button>
       <span class="tm-showing"
-        >Showing {{ showingRange }} of {{ filteredTables.length }} tables</span
+        >Showing {{ showingRange }} of {{ allTables.length }} tables</span
       >
       <div class="tm-pagination">
         <button class="pg-btn" @click="prevPage" :disabled="page === 1">
@@ -59,61 +50,31 @@
 
     <!-- Table -->
     <div class="tm-table-wrap">
-      <table class="tm-table">
+      <p v-if="loading" class="tm-state-msg">Loading tables...</p>
+      <p v-else-if="error" class="tm-state-msg tm-error">{{ error }}</p>
+      <table v-else class="tm-table">
         <thead>
           <tr>
             <th>Table Number</th>
-            <th>Capacity</th>
+            <th>QR Code</th>
             <th>Status</th>
-            <th>Location</th>
             <th>Actions</th>
           </tr>
         </thead>
+
         <tbody>
           <tr v-for="row in pagedTables" :key="row.id" class="tm-row">
             <td data-label="Table">
-              <span class="table-id">{{ row.id }}</span>
-              <span class="table-name">{{ row.name }}</span>
+              <span class="table-id">T{{ row.tableNumber }}</span>
             </td>
-            <td class="td-cap" data-label="Capacity">
-              {{ row.capacity }} Seats
-            </td>
+            <td data-label="QR Code" class="td-qr">{{ row.qrCode }}</td>
             <td data-label="Status">
               <span :class="['status-badge', row.status.toLowerCase()]">{{
                 row.status
               }}</span>
             </td>
-            <td class="td-loc" data-label="Location">
-              <span class="loc-content">
-                <span class="loc-icon">
-                  <svg
-                    v-if="row.location === 'Indoor'"
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="20"
-                    width="20"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M12 3l9 7h-3v9h-5v-6H11v6H6v-9H3l9-7z" />
-                  </svg>
-                  <svg
-                    v-else
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="20px"
-                    viewBox="0 -960 960 960"
-                    width="20px"
-                    fill="#000000"
-                  >
-                    <path
-                      d="M480-144v-432q-10.69-10.8-26.35-17.4Q438-600 421-600t-33.03 6.3Q371.95-587.4 361-576h-96q5-101 77-170.5T516-816q102 0 174 69.5T767-576h-96q-10.95-11.4-26.97-17.7Q628-600 611-600t-32.65 6.6Q562.69-586.8 552-576v432h-72Zm24-504h25q18-11 39.07-17.5T612-672q14.09 0 27.55 2.5Q653-667 666-662q-24-37-63-59.5T516-744q-48 0-87 22.5T366-662q13-5 26.45-7.5Q405.91-672 420-672q23.21 0 44.6 6.5Q486-659 504-648Zm120 504v-216h216v216h-72v-144h-72v144h-72Zm-444 0v-98q-17.18-4.34-28.64-16.49Q139.91-270.64 138-288L96-624h25q20.32 0 35.77 13.67Q172.23-596.65 174-577l27 217h135q33 0 52.5 19.5T408-288v48h-48v96h-48v-96h-84v96h-48Zm336-504Z"
-                    />
-                  </svg>
-                </span>
-                {{ row.location }}
-              </span>
-            </td>
             <td class="td-actions">
-              <button class="action-btn" title="Edit">
+              <button class="action-btn" title="Edit" @click="handleEdit(row)">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="20px"
@@ -126,7 +87,23 @@
                   />
                 </svg>
               </button>
-              <button class="action-btn" title="More">⋮</button>
+              <button
+                class="action-btn"
+                title="Delete"
+                @click="handleDelete(row)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="#000000"
+                >
+                  <path
+                    d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360Z"
+                  />
+                </svg>
+              </button>
             </td>
           </tr>
         </tbody>
@@ -143,104 +120,20 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import api from "../../services/api.js";
 import DesignPageCreateTable from "./DesignPageCreateTable.vue";
 
-const activeTab = ref("All");
-const tabs = ["All", "Indoor", "Outdoor"];
 const page = ref(1);
 const perPage = 10;
 
 const showForm = ref(false);
+const loading = ref(false);
+const error = ref(null);
 
-const allTables = ref([
-  {
-    id: "T01",
-    name: "Front Window",
-    capacity: 4,
-    status: "Available",
-    location: "Indoor",
-  },
-  {
-    id: "T02",
-    name: "Main Floor",
-    capacity: 2,
-    status: "Occupied",
-    location: "Indoor",
-  },
-  {
-    id: "T12",
-    name: "Garden Terrace",
-    capacity: 6,
-    status: "Reserved",
-    location: "Outdoor",
-  },
-  {
-    id: "T04",
-    name: "Bar Side",
-    capacity: 2,
-    status: "Available",
-    location: "Indoor",
-  },
-  {
-    id: "T20",
-    name: "Corner Booth",
-    capacity: 8,
-    status: "Occupied",
-    location: "Indoor",
-  },
-  {
-    id: "T15",
-    name: "Patio Edge",
-    capacity: 4,
-    status: "Available",
-    location: "Outdoor",
-  },
-  {
-    id: "T07",
-    name: "Mezzanine",
-    capacity: 6,
-    status: "Reserved",
-    location: "Indoor",
-  },
-  {
-    id: "T09",
-    name: "Rooftop Deck",
-    capacity: 10,
-    status: "Available",
-    location: "Outdoor",
-  },
-  {
-    id: "T03",
-    name: "Lounge Left",
-    capacity: 4,
-    status: "Occupied",
-    location: "Indoor",
-  },
-  {
-    id: "T11",
-    name: "Courtyard",
-    capacity: 6,
-    status: "Available",
-    location: "Outdoor",
-  },
-  {
-    id: "T17",
-    name: "Fireplace Nook",
-    capacity: 2,
-    status: "Reserved",
-    location: "Indoor",
-  },
-  {
-    id: "T22",
-    name: "Garden Side",
-    capacity: 4,
-    status: "Available",
-    location: "Outdoor",
-  },
-]);
+const allTables = ref([]);
 
-const stats = [
+const stats = ref([
   {
     label: "TOTAL CAPACITY",
     value: "142",
@@ -269,25 +162,39 @@ const stats = [
     badgeType: "",
     sub: "Bookings",
   },
-];
+]);
 
-const filteredTables = computed(() => {
-  if (activeTab.value === "All") return allTables.value;
-  return allTables.value.filter((t) => t.location === activeTab.value);
-});
+async function fetchTables() {
+  loading.value = true;
+  error.value = null;
+  try {
+    const res = await api.get("/tables");
+    allTables.value = res.data.map((t) => ({
+      id: t.id,
+      tableNumber: t.table_number,
+      qrCode: t.qr_code,
+      status: t.status,
+    }));
+  } catch (err) {
+    error.value = err.response?.data?.message || "Failed to load tables.";
+    console.error("Fetch tables error:", err);
+  } finally {
+    loading.value = false;
+  }
+}
 
-const totalPages = computed(() =>
-  Math.ceil(filteredTables.value.length / perPage),
-);
+onMounted(fetchTables);
+
+const totalPages = computed(() => Math.ceil(allTables.value.length / perPage));
 
 const pagedTables = computed(() =>
-  filteredTables.value.slice((page.value - 1) * perPage, page.value * perPage),
+  allTables.value.slice((page.value - 1) * perPage, page.value * perPage),
 );
 
 const showingRange = computed(() => {
   const start = (page.value - 1) * perPage + 1;
-  const end = Math.min(page.value * perPage, filteredTables.value.length);
-  return `${start}–${end}`;
+  const end = Math.min(page.value * perPage, allTables.value.length);
+  return allTables.value.length === 0 ? "0" : `${start}–${end}`;
 });
 
 function prevPage() {
@@ -300,25 +207,34 @@ function loadMore() {
   if (page.value < totalPages.value) page.value++;
 }
 
-const handleCreateTable = (newTable) => {
-  const existingIds = allTables.value.map((t) => parseInt(t.id.substring(1)));
-  const maxId = Math.max(...existingIds, 0);
-  const nextIdNumber = maxId + 1;
-  const nextId = `T${nextIdNumber.toString().padStart(2, "0")}`;
-
-  const tableToAdd = {
-    id: nextId,
-    name: newTable.name,
-    capacity: newTable.capacity,
-    status: newTable.status,
-    location: newTable.zone,
-  };
-
-  allTables.value.unshift(tableToAdd);
-  showForm.value = false;
-  page.value = 1;
-  activeTab.value = "All";
+const handleCreateTable = async (newTable) => {
+  try {
+    await api.post("/tables", {
+      table_number: newTable.tableNumber ?? newTable.table_number,
+      status: newTable.status ?? "closed",
+    });
+    await fetchTables();
+    showForm.value = false;
+    page.value = 1;
+  } catch (err) {
+    console.error("Create table error:", err);
+  }
 };
+
+function handleEdit(row) {
+  // TODO: open edit form / modal with row data
+  console.log("Edit table:", row);
+}
+
+async function handleDelete(row) {
+  if (!confirm(`Delete table T${row.tableNumber}?`)) return;
+  try {
+    await api.delete(`/tables/${row.id}`);
+    await fetchTables();
+  } catch (err) {
+    console.error("Delete table error:", err);
+  }
+}
 </script>
 
 <style scoped>
@@ -455,33 +371,6 @@ const handleCreateTable = (newTable) => {
   padding: 0.85rem 1.25rem;
   border-bottom: none;
 }
-.tm-tabs {
-  display: flex;
-  gap: 0.3rem;
-  background: #f1f5f9;
-  border-radius: 8px;
-  padding: 0.25rem;
-}
-.tm-tab {
-  background: transparent;
-  border: none;
-  border-radius: 6px;
-  padding: 0.3rem 0.85rem;
-  font-size: 0.82rem;
-  font-weight: 500;
-  font-family: inherit;
-  color: #475569;
-  cursor: pointer;
-  transition:
-    background 0.15s,
-    color 0.15s;
-}
-.tm-tab.active {
-  background: var(--surface);
-  color: var(--blue);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  font-weight: 600;
-}
 .tm-filter-btn {
   display: flex;
   align-items: center;
@@ -537,6 +426,15 @@ const handleCreateTable = (newTable) => {
   border-radius: 0 0 var(--dashboard-radius) var(--dashboard-radius);
   overflow-x: auto;
 }
+.tm-state-msg {
+  padding: 2rem 1.25rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #888;
+}
+.tm-error {
+  color: #b91c1c;
+}
 .tm-table {
   width: 100%;
   border-collapse: collapse;
@@ -576,14 +474,11 @@ const handleCreateTable = (newTable) => {
   background: var(--blue-lt);
   padding: 0.18rem 0.55rem;
   border-radius: 5px;
-  margin-right: 0.6rem;
 }
-.table-name {
-  font-weight: 500;
-  color: #222;
-}
-.td-cap {
+.td-qr {
   color: #666;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
 }
 
 .status-badge {
@@ -593,7 +488,8 @@ const handleCreateTable = (newTable) => {
   font-size: 0.78rem;
   font-weight: 600;
 }
-.status-badge.available {
+.status-badge.available,
+.status-badge.open {
   background: #dcfce7;
   color: #166534;
 }
@@ -605,21 +501,9 @@ const handleCreateTable = (newTable) => {
   background: #e0f2fe;
   color: #075985;
 }
-
-/* loc-content holds the icon + text; td-loc is just a plain cell on desktop */
-.td-loc {
-  color: #555;
-}
-.loc-content {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  white-space: nowrap;
-}
-.loc-icon {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
+.status-badge.closed {
+  background: #f1f5f9;
+  color: #475569;
 }
 
 .td-actions {
@@ -669,20 +553,17 @@ const handleCreateTable = (newTable) => {
    RESPONSIVE
    ═══════════════════════════════════════ */
 
-/* Tablet — stats drop to 2-col, table still scrolls horizontally */
 @media (max-width: 900px) {
   .tm-stats {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Mobile — 640px breakpoint */
 @media (max-width: 640px) {
   .tm-root {
     padding: 1.25rem 1rem;
   }
 
-  /* Header: stack vertically, button full width */
   .tm-header {
     flex-direction: column;
     align-items: stretch;
@@ -694,32 +575,18 @@ const handleCreateTable = (newTable) => {
     padding: 0.7rem 1rem;
   }
 
-  /* Stats: 2×2 */
   .tm-stats {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
     margin-bottom: 1.25rem;
   }
 
-  /* Filter bar: tabs fill own row, filter btn + pagination share row below */
   .tm-filters-bar {
     padding: 0.75rem 1rem;
     row-gap: 0.5rem;
   }
-  .tm-tabs {
-    width: 100%;
-    order: -1; /* always first */
-  }
-  .tm-tab {
-    flex: 1;
-    text-align: center;
-    padding: 0.35rem 0.4rem;
-  }
   .tm-showing {
     display: none;
-  }
-  .tm-filter-btn {
-    flex-shrink: 0;
   }
   .tm-pagination {
     margin-left: auto;
@@ -729,33 +596,29 @@ const handleCreateTable = (newTable) => {
     height: 32px;
   }
 
-  /* ── Table → card layout ── */
   .tm-table-wrap {
-    overflow-x: unset; /* no horizontal scroll */
+    overflow-x: unset;
   }
   .tm-table {
     min-width: unset;
     width: 100%;
   }
-  /* Kill the thead */
   .tm-table thead {
     display: none;
   }
-  /* Block-ify table/tbody so tr can become a grid */
   .tm-table,
   .tm-table tbody {
     display: block;
     width: 100%;
   }
 
-  /* Each row is a 2-col card */
   .tm-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
-      "name    name"
-      "cap     status"
-      "loc     actions";
+      "table   table"
+      "qr      status"
+      "actions actions";
     column-gap: 1rem;
     row-gap: 0.6rem;
     padding: 1rem;
@@ -765,7 +628,6 @@ const handleCreateTable = (newTable) => {
     border-bottom: none;
   }
 
-  /* Every cell: flex column → small label on top, value below */
   .tm-table td {
     padding: 0;
     display: flex;
@@ -783,9 +645,8 @@ const handleCreateTable = (newTable) => {
     color: #aaa;
   }
 
-  /* Name cell — full width, horizontal, no label */
   .tm-table td:first-child {
-    grid-area: name;
+    grid-area: table;
     flex-direction: row;
     align-items: center;
     gap: 0.5rem;
@@ -796,22 +657,13 @@ const handleCreateTable = (newTable) => {
     display: none;
   }
 
-  /* Capacity */
-  .td-cap {
-    grid-area: cap;
+  .td-qr {
+    grid-area: qr;
   }
-
-  /* Status (3rd td, no unique class in original) */
   .tm-table td:nth-child(3) {
     grid-area: status;
   }
 
-  /* Location */
-  .td-loc {
-    grid-area: loc;
-  }
-
-  /* Actions — bottom-right, no label, buttons in a row */
   .td-actions {
     grid-area: actions;
     flex-direction: row;
@@ -823,18 +675,11 @@ const handleCreateTable = (newTable) => {
     display: none;
   }
 
-  /* Bigger touch targets on action buttons */
   .action-btn {
     padding: 0.45rem 0.5rem;
   }
-
-  /* loc-content wraps comfortably on narrow cards */
-  .loc-content {
-    white-space: normal;
-  }
 }
 
-/* Small phones ≤ 400px — single column card */
 @media (max-width: 400px) {
   .tm-stats {
     gap: 0.5rem;
@@ -845,10 +690,9 @@ const handleCreateTable = (newTable) => {
   .tm-row {
     grid-template-columns: 1fr;
     grid-template-areas:
-      "name"
+      "table"
       "status"
-      "cap"
-      "loc"
+      "qr"
       "actions";
     row-gap: 0.5rem;
   }
