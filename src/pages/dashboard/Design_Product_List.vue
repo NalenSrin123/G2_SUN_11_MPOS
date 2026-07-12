@@ -1,19 +1,17 @@
 <template>
   <div class="min-h-screen font-sans">
-    <!-- Add Product Form — replaces the list entirely -->
     <AddProduct
       v-if="showForm"
       @close="showForm = false"
       @add="handleAddProduct"
     />
 
-    <!-- Product List — only shown when form is hidden -->
     <template v-else>
-      <!-- Header -->
       <div
         class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6"
       >
         <div>
+          
           <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">
             Product List
           </h1>
@@ -29,7 +27,6 @@
         </button>
       </div>
 
-      <!-- Stat Cards - Responsive Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <div class="border border-gray-400 bg-white rounded-xl p-4 sm:p-5">
           <div class="flex justify-between items-start mb-4">
@@ -97,9 +94,7 @@
         </div>
       </div>
 
-      <!-- Table Card - Horizontal Scroll on Mobile -->
       <div class="border border-gray-400 rounded-xl overflow-hidden">
-        <!-- Toolbar - Stack on mobile -->
         <div
           class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 px-4 sm:px-5 py-3 bg-white"
         >
@@ -135,7 +130,6 @@
           </div>
         </div>
 
-        <!-- Responsive Table Container -->
         <div class="overflow-x-auto">
           <table class="w-full border-t border-gray-100 min-w-[640px]">
             <thead>
@@ -177,16 +171,16 @@
                   <div class="flex items-center gap-2 sm:gap-3">
                     <img
                       :src="p.image"
-                      :alt="p.name"
+                      :alt="typeof p.name === 'object' ? p.name?.name : p.name"
                       class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover flex-shrink-0"
                     />
                     <div class="min-w-0">
                       <p
                         class="text-sm font-semibold text-gray-800 truncate max-w-[150px] sm:max-w-none"
                       >
-                        {{ p.name }}
+                        {{ typeof p.name === 'object' ? p.name?.name : p.name }}
                       </p>
-                      <p class="text-xs text-gray-400">SKU: {{ p.sku }}</p>
+                      <p class="text-xs text-gray-400">SKU: {{ p.sku || 'N/A' }}</p>
                     </div>
                   </div>
                 </td>
@@ -198,7 +192,7 @@
                 <td
                   class="px-4 sm:px-5 py-3 sm:py-4 text-sm font-semibold text-gray-800"
                 >
-                  ${{ p.price.toFixed(2) }}
+                  {{ p.price ? Number(p.price).toFixed(2) : '0.00' }}
                 </td>
                 <td class="px-4 sm:px-5 py-3 sm:py-4 hidden md:table-cell">
                   <span
@@ -233,7 +227,6 @@
           </table>
         </div>
 
-        <!-- Pagination - Wrap on mobile -->
         <div
           class="flex flex-col sm:flex-row justify-between items-center gap-3 px-4 sm:px-5 py-4 border-t border-gray-100 bg-gray-100"
         >
@@ -245,7 +238,6 @@
             <ChevronLeft class="w-4 h-4" /> Previous
           </button>
 
-          <!-- Pagination numbers - hide on smallest screens -->
           <div class="hidden sm:flex items-center gap-1">
             <button
               v-for="n in Math.min(totalPages, 5)"
@@ -275,7 +267,6 @@
             </button>
           </div>
 
-          <!-- Mobile page indicator -->
           <div class="sm:hidden text-sm text-gray-600">
             Page {{ page }} of {{ totalPages }}
           </div>
@@ -290,10 +281,11 @@
         </div>
       </div>
 
-      <!-- Barcode FAB - Adjusted for mobile -->
       <div class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6">
         <button
-          class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg transition active:scale-95"
+          @click="handleUpdateTable(5, { status: 'open' })"
+          :disabled="isUpdatingTable"
+          class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg transition active:scale-95 disabled:opacity-50"
         >
           <ScanBarcode class="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
@@ -301,8 +293,9 @@
     </template>
   </div>
 </template>
+
 <script setup>
-import api from '@/services/api.js';
+import api, { updateTable } from '@/services/api.js';
 import { ref, computed, watch, onMounted } from "vue";
 import {
   ClipboardList,
@@ -325,41 +318,59 @@ const showForm = ref(false);
 const search = ref("");
 const page = ref(1);
 const itemsPerPage = 4;
+const isUpdatingTable = ref(false); // send id to api
 
-const products = ref([
-]);
+const products = ref([]);
+
 const fetchProducts = async () => {
-
   try {
     const res = await api.get("/products");
-
-    // console.log("API RESPONSE:", api);
-
     // support different backend formats
     products.value = res.data.data || res.data || [];
-
   } catch (error) {
-    console.log(error);
-    error.value = "Failed to load products";
+    console.error("Failed to load products:", error);
   } 
 };
 
-// ================= ON LOAD =================
+/**
+ * @param {number|string} id 
+ * @param {Object} data 
+ */
+const handleUpdateTable = async (id, data) => {
+  isUpdatingTable.value = true;
+  try {
+    const result = await updateTable(id, data);
+    console.log('Table updated successfully:', result);
+    alert('Table updated successfully!');
+  } catch (error) {
+    
+    console.error('Failed to update table:', error.response?.data || error.message || error);
+    alert('Unable to update the table!');
+  } finally {
+    isUpdatingTable.value = false;
+  }
+};
+
+//  ON LOAD 
 onMounted(() => {
   fetchProducts();
 });
+
 const outOfStockCount = computed(
   () => products.value.filter((p) => p.status === "OUT OF STOCK").length,
 );
 
+
 const filtered = computed(() => {
   const q = search.value.toLowerCase();
-  return products.value.filter(
-    (p) =>
-      p.name.toLowerCase().includes(q) ||
-      p.sku.toLowerCase().includes(q) ||
-      p.category.toLowerCase().includes(q),
-  );
+  return products.value.filter((p) => {
+    const prodName = typeof p.name === 'object' ? p.name?.name : p.name;
+    return (
+      (prodName || "").toLowerCase().includes(q) ||
+      (p.sku || "").toLowerCase().includes(q) ||
+      (p.category || "").toLowerCase().includes(q)
+    );
+  });
 });
 
 const totalPages = computed(() =>

@@ -37,4 +37,16 @@ export const deleteCategory = async (id) => {
   }
 };
 
-export default api
+
+//update table data
+export const updateTable = async (id, tableData) => {
+  try {
+    // Make a PUT request to update the table data
+    const response = await api.put(`/tables/${id}`, tableData);
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating table ${id}:`, error);
+    throw error;
+  }
+};
+export default api;
