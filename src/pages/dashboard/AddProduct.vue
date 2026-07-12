@@ -562,28 +562,14 @@ export default {
         };
 
         const response = await api.post("/products", payload, { timeout: 15000 });
-        const result = response.data;
-
+        if (response.status === 200 || response.status === 201) {
+          const createdProduct = response.data?.data ?? response.data ?? payload;
+          emit("add", createdProduct);
+          emit("close");
+          resetForm();
+          goToProductList();
+        }
         saving.value = false;
-
-        // ✅ Show success modal
-        showModal({
-          type: "success",
-          title: "✅ Product Created!",
-          message: "Product has been created successfully.",
-          buttonText: "Go to Product List",
-          onConfirm: () => {
-            // Emit events
-            emit("add", result);
-            resetForm();
-            emit("close");
-
-            // Navigate to product list
-            setTimeout(() => {
-              goToProductList();
-            }, 100);
-          },
-        });
       } catch (error) {
         saving.value = false;
         handleSaveError(error);

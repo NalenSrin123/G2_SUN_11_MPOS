@@ -110,8 +110,8 @@ const routes = [
   //  Public
   {
     path: "/",
-    component:Home,
     children: [
+      {path:'/',component:Home},
       { path: "/home", component: Home },
       { path: "/product-detail", component: Product_Detail },
       { path: "/payment-page", component: Design_Payment_Page },

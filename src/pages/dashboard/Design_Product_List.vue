@@ -188,7 +188,7 @@
                 <td
                   class="px-4 sm:px-5 py-3 sm:py-4 text-sm text-gray-500 hidden sm:table-cell"
                 >
-                  {{ p.category }}
+                  {{ p.category.name}}
                 </td>
                 <td class="px-4 sm:px-5 py-3 sm:py-4 text-sm font-semibold text-gray-800">
                   ${{ p.price }}
