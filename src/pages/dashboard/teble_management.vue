@@ -52,6 +52,9 @@
     <div class="tm-table-wrap">
       <p v-if="loading" class="tm-state-msg">Loading tables...</p>
       <p v-else-if="error" class="tm-state-msg tm-error">{{ error }}</p>
+      <p v-else-if="allTables.length === 0" class="tm-state-msg">
+        No tables yet. Click "Create Table" to add one.
+      </p>
       <table v-else class="tm-table">
         <thead>
           <tr>
@@ -133,37 +136,6 @@ const error = ref(null);
 
 const allTables = ref([]);
 
-const stats = ref([
-  {
-    label: "TOTAL CAPACITY",
-    value: "142",
-    badge: "+8",
-    badgeType: "up",
-    sub: "",
-  },
-  {
-    label: "AVAILABLE NOW",
-    value: "12",
-    badge: null,
-    badgeType: "",
-    sub: "Tables",
-  },
-  {
-    label: "OCCUPANCY RATE",
-    value: "84%",
-    badge: "-2%",
-    badgeType: "down",
-    sub: "",
-  },
-  {
-    label: "RESERVED TODAY",
-    value: "28",
-    badge: null,
-    badgeType: "",
-    sub: "Bookings",
-  },
-]);
-
 async function fetchTables() {
   loading.value = true;
   error.value = null;
@@ -184,6 +156,53 @@ async function fetchTables() {
 }
 
 onMounted(fetchTables);
+
+// ── Stats now derived from real table data instead of hardcoded ──
+const stats = computed(() => {
+  const total = allTables.value.length;
+
+  const countByStatus = (status) =>
+    allTables.value.filter(
+      (t) => (t.status || "").toLowerCase() === status,
+    ).length;
+
+  const available = countByStatus("available") + countByStatus("open");
+  const occupied = countByStatus("occupied");
+  const reserved = countByStatus("reserved");
+
+  const occupancyRate = total > 0 ? Math.round((occupied / total) * 100) : 0;
+
+  return [
+    {
+      label: "TOTAL TABLES",
+      value: total,
+      badge: null,
+      badgeType: "",
+      sub: "",
+    },
+    {
+      label: "AVAILABLE NOW",
+      value: available,
+      badge: null,
+      badgeType: "",
+      sub: "Tables",
+    },
+    {
+      label: "OCCUPANCY RATE",
+      value: `${occupancyRate}%`,
+      badge: null,
+      badgeType: "",
+      sub: "",
+    },
+    {
+      label: "RESERVED",
+      value: reserved,
+      badge: null,
+      badgeType: "",
+      sub: "Tables",
+    },
+  ];
+});
 
 const totalPages = computed(() => Math.ceil(allTables.value.length / perPage));
 
