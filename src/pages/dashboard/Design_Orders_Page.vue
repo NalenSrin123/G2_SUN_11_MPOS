@@ -1,16 +1,19 @@
 <template>
-  <div class="orders-shell">
-    <div class="page-header">
+  <div class="w-full min-h-full flex flex-col gap-[clamp(14px,2vw,22px)] text-slate-700 font-sans">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
       <div>
-        <h1 class="title">Orders</h1>
-        <p class="subtitle">Track active tickets, kitchen status, and completed receipts.</p>
+        <h1 class="text-[clamp(1.2rem,2.5vw,1.75rem)] font-bold tracking-tight text-slate-900">
+          Orders
+        </h1>
+        <p class="text-[clamp(0.75rem,1.2vw,0.85rem)] text-slate-500 mt-0.5">
+          Track active tickets, kitchen status, and completed receipts.
+        </p>
       </div>
 
-      <div class="search-wrap">
+      <div class="relative w-full sm:w-[360px] flex-shrink-0">
         <svg
-          class="search-icon"
-          width="16"
-          height="16"
+          class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -25,21 +28,32 @@
           v-model="searchQuery"
           type="text"
           placeholder="Search orders, tables, or customers..."
+          class="w-full h-[42px] pl-10 pr-4 rounded-lg border border-slate-300 bg-white text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-200 transition"
         />
       </div>
     </div>
 
-    <section class="stats-grid">
-      <article class="stat-card" v-for="stat in stats" :key="stat.label">
-        <div class="stat-top">
-          <div class="stat-icon" :class="stat.iconClass">
+    <!-- Stats Grid -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <article
+        v-for="stat in stats"
+        :key="stat.label"
+        class="bg-white rounded-lg shadow p-5 min-w-0"
+      >
+        <div class="flex items-start justify-between mb-3">
+          <div
+            class="w-8 h-8 rounded-lg grid place-items-center"
+            :class="stat.iconBg"
+          >
             <svg
+              class="w-[17px] h-[17px]"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
+              :class="stat.iconColor"
             >
               <path :d="stat.iconPath" />
               <circle
@@ -50,82 +64,121 @@
               />
             </svg>
           </div>
-          <span class="stat-badge" :class="stat.badgeClass">{{
-            stat.badge
-          }}</span>
+          <span
+            class="rounded-full px-2.5 py-1 text-xs font-bold"
+            :class="stat.badgeClasses"
+          >
+            {{ stat.badge }}
+          </span>
         </div>
-        <div class="stat-label">{{ stat.label }}</div>
-        <div class="stat-value">
-          {{ stat.value
-          }}<span v-if="stat.unit" class="stat-unit">{{ stat.unit }}</span>
+        <div class="text-xs font-bold uppercase tracking-wide text-slate-500">
+          {{ stat.label }}
         </div>
-        <div class="bar-track">
+        <div class="mt-1 text-[30px] font-extrabold leading-none">
+          {{ stat.value }}<span v-if="stat.unit" class="text-sm font-medium ml-1">{{ stat.unit }}</span>
+        </div>
+        <div class="h-1 mt-4 rounded-full bg-slate-200 overflow-hidden">
           <div
-            class="bar-fill"
-            :class="stat.barClass"
+            class="h-full rounded-full"
+            :class="stat.barColor"
             :style="{ width: stat.barW }"
           ></div>
         </div>
       </article>
     </section>
 
-    <section class="orders-card">
-      <div class="tabs">
+    <!-- Orders Table -->
+    <section class="bg-white rounded-lg shadow overflow-hidden">
+      <!-- Tabs -->
+      <div class="flex items-center gap-2 px-5 py-3 border-b border-slate-200 min-h-[60px]">
         <button
           v-for="t in tabs"
           :key="t"
-          class="tab"
-          :class="{ active: activeTab === t }"
+          class="min-w-[86px] h-[38px] rounded-lg text-sm font-bold transition"
+          :class="[
+            activeTab === t
+              ? 'bg-blue-600 text-white'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200',
+          ]"
           @click="activeTab = t"
         >
           {{ t }}
         </button>
       </div>
 
-      <div class="table-wrap">
-        <table>
-          <thead>
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+          <thead class="bg-slate-50">
             <tr>
-              <th>Order ID</th>
-              <th>Customer / Table</th>
-              <th>Items</th>
-              <th class="center">Elapsed Time</th>
-              <th>Total</th>
-              <th>Status</th>
-              <th>Action</th>
+              <th class="h-[52px] px-5 text-left text-[11px] font-extrabold uppercase tracking-wider text-slate-600 border-b border-slate-200 whitespace-nowrap">
+                Order ID
+              </th>
+              <th class="h-[52px] px-5 text-left text-[11px] font-extrabold uppercase tracking-wider text-slate-600 border-b border-slate-200 whitespace-nowrap">
+                Customer / Table
+              </th>
+              <th class="h-[52px] px-5 text-left text-[11px] font-extrabold uppercase tracking-wider text-slate-600 border-b border-slate-200 whitespace-nowrap">
+                Items
+              </th>
+              <th class="h-[52px] px-5 text-center text-[11px] font-extrabold uppercase tracking-wider text-slate-600 border-b border-slate-200 whitespace-nowrap">
+                Elapsed Time
+              </th>
+              <th class="h-[52px] px-5 text-left text-[11px] font-extrabold uppercase tracking-wider text-slate-600 border-b border-slate-200 whitespace-nowrap">
+                Total
+              </th>
+              <th class="h-[52px] px-5 text-left text-[11px] font-extrabold uppercase tracking-wider text-slate-600 border-b border-slate-200 whitespace-nowrap">
+                Status
+              </th>
+              <th class="h-[52px] px-5 text-left text-[11px] font-extrabold uppercase tracking-wider text-slate-600 border-b border-slate-200 whitespace-nowrap">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr v-if="filteredOrders.length === 0">
-              <td colspan="7" class="empty-row">No orders found.</td>
-            </tr>
-            <tr v-for="order in filteredOrders" :key="order.id">
-              <td>
-                <span class="order-id">{{ order.id }}</span>
+              <td colspan="7" class="h-[74px] px-5 text-center text-slate-500 border-b border-slate-100">
+                No orders found.
               </td>
-              <td>
-                <div class="customer-cell">
+            </tr>
+            <tr
+              v-for="order in filteredOrders"
+              :key="order.id"
+              class="hover:bg-slate-50 transition"
+            >
+              <td class="h-[74px] px-5 border-b border-slate-100 align-middle">
+                <span class="text-blue-600 font-extrabold text-sm">{{ order.id }}</span>
+              </td>
+              <td class="h-[74px] px-5 border-b border-slate-100 align-middle">
+                <div class="flex items-center gap-2.5">
                   <div
-                    class="customer-avatar"
+                    class="w-[30px] h-[30px] rounded-full grid place-items-center text-white text-[11px] font-extrabold flex-shrink-0"
                     :style="{ background: order.avatarColor }"
                   >
                     {{ order.initials }}
                   </div>
                   <div>
-                    <div class="customer-name">{{ order.customer }}</div>
-                    <div class="customer-sub">{{ order.tableInfo }}</div>
+                    <div class="text-sm font-extrabold text-slate-900 leading-tight">
+                      {{ order.customer }}
+                    </div>
+                    <div class="text-[11px] text-slate-500 mt-0.5">
+                      {{ order.tableInfo }}
+                    </div>
                   </div>
                 </div>
               </td>
-              <td class="items-cell">
+              <td class="h-[74px] px-5 border-b border-slate-100 align-middle max-w-[220px]">
                 <div>{{ order.itemsPreview }}</div>
-                <div v-if="order.moreItems" class="items-more">
+                <div v-if="order.moreItems" class="text-blue-600 text-[11px] font-bold mt-0.5">
                   +{{ order.moreItems }} more items
                 </div>
               </td>
-              <td class="center">
-                <span class="elapsed" :class="elapsedClass(order)">
+              <td class="h-[74px] px-5 border-b border-slate-100 align-middle text-center">
+                <span
+                  class="inline-flex items-center justify-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-extrabold whitespace-nowrap"
+                  :class="elapsedClass(order)"
+                >
                   <svg
+                    class="w-[11px] h-[11px]"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -137,16 +190,22 @@
                   {{ order.elapsed }}
                 </span>
               </td>
-              <td>
-                <span class="total">{{ order.total }}</span>
+              <td class="h-[74px] px-5 border-b border-slate-100 align-middle">
+                <span class="text-sm font-extrabold text-slate-900">{{ order.total }}</span>
               </td>
-              <td>
-                <span class="status-badge" :class="statusClass(order.status)">{{
-                  order.status
-                }}</span>
+              <td class="h-[74px] px-5 border-b border-slate-100 align-middle">
+                <span
+                  class="inline-flex rounded-full px-2.5 py-1 text-[11px] font-extrabold whitespace-nowrap"
+                  :class="statusClass(order.status)"
+                >
+                  {{ order.status }}
+                </span>
               </td>
-              <td>
-                <button class="action-btn" @click="handleAction(order)">
+              <td class="h-[74px] px-5 border-b border-slate-100 align-middle">
+                <button
+                  class="h-8 px-3 rounded-lg border border-slate-300 bg-white text-xs font-bold text-slate-600 hover:bg-blue-50 hover:border-blue-600 hover:text-blue-600 transition"
+                  @click="handleAction(order)"
+                >
                   {{ order.status === "Delivered" ? "Receipt" : "Update" }}
                 </button>
               </td>
@@ -159,20 +218,27 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
+import { getOrders } from "@/services/api"; // adjust path to match your project
 
+// ─── Reactive state ──────────────────────────────────────────
 const searchQuery = ref("");
 const activeTab = ref("All");
 const tabs = ["All", "Pending", "Preparing", "Delivered"];
+const orders = ref([]);
+const isLoading = ref(true);
+const errorMsg = ref(null);
 
+// ─── Stats (static) ──────────────────────────────────────────
 const stats = [
   {
     label: "Active Orders",
     value: "36",
     badge: "+18%",
-    badgeClass: "badge-green",
-    iconClass: "icon-blue",
-    barClass: "bar-blue",
+    badgeClasses: "bg-emerald-100 text-emerald-700",
+    iconBg: "bg-blue-600",
+    iconColor: "text-white",
+    barColor: "bg-blue-600",
     barW: "80%",
     iconPath:
       "M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0",
@@ -182,9 +248,10 @@ const stats = [
     value: "11.2",
     unit: "min",
     badge: "-5m",
-    badgeClass: "badge-green",
-    iconClass: "icon-soft",
-    barClass: "bar-gray",
+    badgeClasses: "bg-emerald-100 text-emerald-700",
+    iconBg: "bg-blue-50",
+    iconColor: "text-slate-500",
+    barColor: "bg-slate-500",
     barW: "32%",
     iconPath: "M12 6v6l4 2",
     iconCircle: { cx: 12, cy: 12, r: 10 },
@@ -194,552 +261,86 @@ const stats = [
     value: "72",
     unit: "%",
     badge: "Busy",
-    badgeClass: "badge-blue",
-    iconClass: "icon-blue",
-    barClass: "bar-blue",
+    badgeClasses: "bg-blue-100 text-blue-600",
+    iconBg: "bg-blue-600",
+    iconColor: "text-white",
+    barColor: "bg-blue-600",
     barW: "72%",
     iconPath: "M13 2L3 14h9l-1 8 10-12h-9l1-8z",
   },
 ];
 
-const orders = ref([
-  {
-    id: "#ORD-9001",
-    customer: "John Smith",
-    initials: "T1",
-    avatarColor: "#2563EB",
-    tableInfo: "Table 1 - 3 Guests",
-    itemsPreview: "Burger, French Fries, Coke",
-    moreItems: 1,
-    elapsed: "12:15",
-    total: "$45.50",
-    status: "Preparing",
-  },
-  {
-    id: "#ORD-9002",
-    customer: "Emma Johnson",
-    initials: "T5",
-    avatarColor: "#10B981",
-    tableInfo: "Table 5 - 2 Guests",
-    itemsPreview: "Chicken Alfredo, Orange Juice",
-    moreItems: null,
-    elapsed: "05:20",
-    total: "$28.75",
-    status: "Pending",
-  },
-  {
-    id: "#ORD-9003",
-    customer: "Michael Brown",
-    initials: "T8",
-    avatarColor: "#F59E0B",
-    tableInfo: "Table 8 - 4 Guests",
-    itemsPreview: "Pizza Family Set",
-    moreItems: 3,
-    elapsed: "18:30",
-    total: "$89.99",
-    status: "Preparing",
-  },
-  {
-    id: "#ORD-9004",
-    customer: "Sophia Davis",
-    initials: "P",
-    avatarColor: "#8B5CF6",
-    tableInfo: "Online Order - Pickup",
-    itemsPreview: "Iced Latte, Croissant",
-    moreItems: null,
-    elapsed: "Done",
-    total: "$12.50",
-    status: "Delivered",
-  },
-  {
-    id: "#ORD-9005",
-    customer: "William Wilson",
-    initials: "T3",
-    avatarColor: "#EF4444",
-    tableInfo: "Table 3 - 2 Guests",
-    itemsPreview: "Steak, Caesar Salad",
-    moreItems: null,
-    elapsed: "22:45",
-    total: "$67.20",
-    status: "Preparing",
-  },
-  {
-    id: "#ORD-9006",
-    customer: "Olivia Martinez",
-    initials: "D",
-    avatarColor: "#06B6D4",
-    tableInfo: "Delivery - 1 Guest",
-    itemsPreview: "Sushi Combo, Green Tea",
-    moreItems: 2,
-    elapsed: "Done",
-    total: "$34.90",
-    status: "Delivered",
-  },
-]);
+// ─── Fetch orders from API ───────────────────────────────────
+async function fetchOrders() {
+  isLoading.value = true;
+  errorMsg.value = null;
+  try {
+    const data = await getOrders();
+    // map API response -> shape the template expects
+    orders.value = data.map((order) => ({
+      id: order.id ?? order._id,
+      customer: order.customerName ?? order.customer,
+      initials: (order.customerName ?? order.customer ?? "")
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2),
+      avatarColor: order.avatarColor ?? "#2563EB",
+      tableInfo: order.tableInfo ?? `Table ${order.tableNumber ?? "-"}`,
+      itemsPreview:
+        order.items?.slice(0, 2).map((i) => i.name).join(", ") ?? "",
+      moreItems: order.items?.length > 2 ? order.items.length - 2 : null,
+      elapsed: order.elapsed ?? "00:00",
+      total: `$${Number(order.total ?? 0).toFixed(2)}`,
+      status: order.status ?? "Pending",
+    }));
+  } catch (error) {
+    console.error("Failed to fetch orders:", error);
+    errorMsg.value = "Failed to load orders. Please try again.";
+  } finally {
+    isLoading.value = false;
+  }
+}
 
+onMounted(() => {
+  fetchOrders();
+});
+
+// ─── Computed: filter + search ──────────────────────────────
 const filteredOrders = computed(() => {
   let list = orders.value;
-  if (activeTab.value !== "All")
+  if (activeTab.value !== "All") {
     list = list.filter((order) => order.status === activeTab.value);
-
+  }
   const q = searchQuery.value.trim().toLowerCase();
   if (!q) return list;
-
   return list.filter((order) =>
     [order.customer, order.id, order.tableInfo, order.itemsPreview].some(
-      (value) => value.toLowerCase().includes(q),
-    ),
+      (val) => val.toLowerCase().includes(q)
+    )
   );
 });
 
+// ─── Helper functions (return Tailwind classes) ─────────────
 function elapsedClass(order) {
-  if (order.status === "Delivered") return "elapsed-done";
+  if (order.status === "Delivered") return "bg-emerald-100 text-emerald-700";
   const mins = parseInt(order.elapsed.split(":")[0], 10);
-  return mins >= 20 ? "elapsed-warn" : "elapsed-ok";
+  return mins >= 20
+    ? "bg-red-100 text-red-600"
+    : "bg-slate-100 text-slate-600";
 }
 
 function statusClass(status) {
-  return (
-    {
-      Preparing: "status-preparing",
-      Pending: "status-pending",
-      Delivered: "status-delivered",
-    }[status] ?? ""
-  );
+  const map = {
+    Preparing: "bg-amber-100 text-amber-800",
+    Pending: "bg-blue-100 text-blue-600",
+    Delivered: "bg-emerald-100 text-emerald-700",
+  };
+  return map[status] || "";
 }
 
 function handleAction(order) {
   alert(`${order.id} - ${order.customer}`);
 }
 </script>
-
-<style scoped>
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-.orders-shell {
-  --brand: var(--dashboard-blue);
-  --surface: var(--dashboard-surface);
-  --text: var(--dashboard-text);
-  --muted: var(--dashboard-muted);
-  --border: var(--dashboard-border);
-  --line: #eef2f7;
-  --green: var(--dashboard-green);
-  --green-bg: #d1fae5;
-  --red: var(--dashboard-red);
-  --red-bg: #fee2e2;
-  --orange: #c2410c;
-  --orange-bg: #ffedd5;
-  --blue-text: var(--dashboard-blue);
-  --blue-bg: #dbeafe;
-  width: 100%;
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(14px, 2vw, 22px);
-  color: var(--text);
-  font-family: var(--font-sans);
-}
-.subtitle {
-  font-size: clamp(0.75rem, 1.2vw, 0.85rem);
-  color: var(--muted);
-  margin-top: 2px;
-}
-
-.page-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-.title {
-  font-size: clamp(1.2rem, 2.5vw, 1.75rem);
-  font-weight: 700;
-  letter-spacing: -0.4px;
-}
-
-.page-header h1 {
-  margin: 0 0 4px;
-  color: var(--text);
-  /* font-weight: 800;   */
-  letter-spacing: 0;
-}
-
-
-.search-wrap {
-  position: relative;
-  width: min(100%, 360px);
-  flex: 0 0 auto;
-}
-
-.search-wrap input {
-  width: 100%;
-  height: 42px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  background: #fff;
-  color: var(--text);
-  font: inherit;
-  font-size: 14px;
-  outline: none;
-  padding: 0 14px 0 40px;
-  transition:
-    border-color 0.15s,
-    box-shadow 0.15s;
-}
-
-.search-wrap input:focus {
-  border-color: var(--brand);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14);
-}
-
-.search-icon {
-  position: absolute;
-  left: 13px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #94a3b8;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.stat-card,
-.orders-card,
-.bottom-card {
-  background: var(--surface);
-  border-radius: var(--dashboard-radius);
-  box-shadow: var(--dashboard-shadow);
-}
-
-.stat-card {
-  min-width: 0;
-  padding: 20px;
-}
-
-.stat-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-.stat-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-}
-.stat-icon svg {
-  width: 17px;
-  height: 17px;
-}
-.icon-blue {
-  background: var(--brand);
-  color: #fff;
-}
-.icon-soft {
-  background: #eff6ff;
-  color: #64748b;
-}
-.stat-badge {
-  border-radius: 999px;
-  padding: 5px 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-.badge-green {
-  background: var(--green-bg);
-  color: var(--green);
-}
-.badge-blue {
-  background: var(--blue-bg);
-  color: var(--blue-text);
-}
-.stat-label {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-.stat-value {
-  margin-top: 4px;
-  font-size: 30px;
-  font-weight: 800;
-  line-height: 1;
-}
-.stat-unit {
-  font-size: 14px;
-  font-weight: 500;
-  margin-left: 3px;
-}
-.bar-track {
-  height: 4px;
-  margin-top: 16px;
-  border-radius: 999px;
-  background: #e2e8f0;
-  overflow: hidden;
-}
-.bar-fill {
-  height: 100%;
-  border-radius: inherit;
-}
-.bar-blue {
-  background: var(--brand);
-}
-.bar-gray {
-  background: #64748b;
-}
-
-.orders-card {
-  overflow: hidden;
-}
-
-.tabs {
-  min-height: 60px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  border-bottom: 1px solid var(--border);
-}
-
-.tab {
-  min-width: 86px;
-  height: 38px;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  background: #f1f5f9;
-  color: #475569;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition:
-    background 0.15s,
-    color 0.15s,
-    border-color 0.15s;
-}
-
-.tab.active {
-  background: var(--brand);
-  color: #fff;
-}
-
-.tab:hover:not(.active) {
-  background: #e2e8f0;
-}
-
-.table-wrap {
-  overflow-x: auto;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-thead {
-  background: #f8fafc;
-}
-
-th {
-  height: 52px;
-  padding: 0 20px;
-  color: #475569;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-align: left;
-  text-transform: uppercase;
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-
-th.center,
-td.center {
-  text-align: center;
-}
-
-td {
-  height: 74px;
-  padding: 0 20px;
-  border-bottom: 1px solid var(--line);
-  color: #334155;
-  font-size: 13px;
-  vertical-align: middle;
-}
-
-tbody tr:last-child td {
-  border-bottom: 0;
-}
-tbody tr:hover td {
-  background: #f8fafc;
-}
-.order-id {
-  color: var(--brand);
-  font-weight: 800;
-  font-size: 13px;
-}
-.customer-cell {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.customer-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 800;
-  flex-shrink: 0;
-}
-.customer-name {
-  color: #0f172a;
-  font-weight: 800;
-  font-size: 13px;
-  line-height: 1.2;
-}
-.customer-sub {
-  color: var(--muted);
-  font-size: 11px;
-  margin-top: 2px;
-}
-.items-cell {
-  max-width: 220px;
-}
-.items-more {
-  color: var(--brand);
-  font-size: 11px;
-  font-weight: 700;
-  margin-top: 2px;
-}
-
-.elapsed,
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  border-radius: 999px;
-  padding: 5px 10px;
-  font-size: 11px;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.elapsed svg {
-  width: 11px;
-  height: 11px;
-}
-.elapsed-warn {
-  background: var(--red-bg);
-  color: var(--red);
-}
-.elapsed-ok {
-  background: #f1f5f9;
-  color: #475569;
-}
-.elapsed-done {
-  background: var(--green-bg);
-  color: var(--green);
-}
-.status-preparing {
-  background: var(--orange-bg);
-  color: var(--orange);
-}
-.status-pending {
-  background: var(--blue-bg);
-  color: var(--blue-text);
-}
-.status-delivered {
-  background: var(--green-bg);
-  color: var(--green);
-}
-.total {
-  color: #0f172a;
-  font-size: 14px;
-  font-weight: 800;
-}
-
-.action-btn {
-  height: 32px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  background: #fff;
-  color: #334155;
-  font: inherit;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 0 12px;
-  cursor: pointer;
-  transition:
-    background 0.15s,
-    border-color 0.15s,
-    color 0.15s;
-}
-
-.action-btn:hover {
-  background: #eff6ff;
-  border-color: var(--brand);
-  color: var(--brand);
-}
-
-.empty-row {
-  text-align: center;
-  color: var(--muted);
-}
-.bottom-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-.bottom-card {
-  flex: 0 0 200px;
-  padding: 20px;
-}
-.bottom-icon {
-  width: 22px;
-  height: 22px;
-  color: var(--brand);
-  margin-bottom: 12px;
-}
-.bottom-icon svg {
-  width: 22px;
-  height: 22px;
-}
-.bottom-label {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-.bottom-value {
-  color: var(--text);
-  font-size: 24px;
-  font-weight: 800;
-  margin-top: 5px;
-}
-
-@media (max-width: 900px) {
-  .page-header {
-    flex-direction: column;
-  }
-
-  .search-wrap {
-    width: 100%;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
