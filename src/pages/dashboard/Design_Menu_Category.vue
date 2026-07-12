@@ -27,7 +27,7 @@
       </div>
 
       <!-- Stat Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 lg:mb-8">
+      <!-- <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 lg:mb-8">
         <div class="card group">
           <p class="text-xs sm:text-sm text-slate-500">Total Categories</p>
           <div class="flex flex-wrap items-baseline justify-between gap-2 mt-1">
@@ -61,7 +61,7 @@
             📊
           </div>
         </div>
-      </div>
+      </div> -->
 
       <!-- Main Table Card -->
       <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">

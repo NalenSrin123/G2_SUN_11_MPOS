@@ -22,11 +22,11 @@ const route = useRoute();
 const navItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Overview" },
   { to: "/dashboard/orders", icon: ShoppingCart, label: "Orders" },
-  { to: "/dashboard/inventory", icon: Warehouse, label: "Inventory" },
+  // { to: "/dashboard/inventory", icon: Warehouse, label: "Inventory" },
   { to: "/dashboard/table", icon: TableProperties, label: "Tables" },
   { to: "/dashboard/product", icon: PackageSearch, label: "Products" },
   { to: "/dashboard/category", icon: Boxes, label: "Categories" },
-  { to: "/dashboard/payment", icon: CreditCard, label: "Payment" },
+  // { to: "/dashboard/payment", icon: CreditCard, label: "Payment" },
   { to: "/dashboard/setting", icon: Settings, label: "Setting" },
 ];
 

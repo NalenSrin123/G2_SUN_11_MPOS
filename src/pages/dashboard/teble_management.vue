@@ -19,7 +19,7 @@
     </div>
 
     <!-- Stat Cards -->
-    <div class="tm-stats">
+    <!-- <div class="tm-stats">
       <div class="stat-card" v-for="stat in stats" :key="stat.label">
         <span class="stat-label">{{ stat.label }}</span>
         <div class="stat-value-row">
@@ -30,7 +30,7 @@
         </div>
         <span class="stat-sub">{{ stat.sub }}</span>
       </div>
-    </div>
+    </div> -->
 
     <!-- Filters -->
     <div class="tm-filters-bar">

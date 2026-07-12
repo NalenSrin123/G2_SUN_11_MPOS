@@ -29,7 +29,7 @@
       </div>
 
       <!-- Stat Cards - Responsive Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+      <!-- <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <div class="border border-gray-400 bg-white rounded-xl p-4 sm:p-5">
           <div class="flex justify-between items-start mb-4">
             <div
@@ -90,7 +90,7 @@
             Wagyu Ribeye
           </p>
         </div>
-      </div>
+      </div> -->
 
       <!-- Table Card - Horizontal Scroll on Mobile -->
       <div class="border border-gray-400 rounded-xl overflow-hidden">

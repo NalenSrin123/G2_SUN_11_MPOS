@@ -34,7 +34,7 @@
     </div>
 
     <!-- Stats Grid -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <article
         v-for="stat in stats"
         :key="stat.label"
@@ -85,7 +85,7 @@
           ></div>
         </div>
       </article>
-    </section>
+    </section> -->
 
     <!-- Orders Table -->
     <section class="bg-white rounded-lg shadow overflow-hidden">
