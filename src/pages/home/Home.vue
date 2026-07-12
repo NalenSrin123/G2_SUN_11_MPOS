@@ -1,7 +1,8 @@
 <script setup>
-import { ref, computed, nextTick } from "vue";
+import { ref, computed, nextTick, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { ShoppingCart } from "lucide-vue-next";
+import api from "@/services/api";
 
 const router = useRouter();
 
@@ -13,7 +14,25 @@ const searchQueries = ref("");
 const isMobileSearchOpen = ref(false);
 const mobileSearchInput = ref(null);
 
-const categories = ["All", "Starters", "Main Course", "Desserts", "Drinks"];
+const categories = ref(["All"]);
+
+const fetchCategories = async () => {
+  try {
+    const response = await api.get("/categories");
+    const data = response.data?.data ?? response.data;
+
+    if (Array.isArray(data)) {
+      categories.value = [
+        "All",
+        ...data.map(category => category.name).filter(Boolean),
+      ];
+    }
+  } catch (error) {
+    console.error("Failed to fetch categories:", error);
+  }
+};
+
+onMounted(fetchCategories);
 
 // Focus input automatically when mobile search bar expands
 const toggleMobileSearch = async () => {
