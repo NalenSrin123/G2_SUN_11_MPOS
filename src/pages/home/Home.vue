@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, nextTick } from "vue";
+import { ref, computed, nextTick, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { ShoppingCart } from "lucide-vue-next";
 
@@ -169,7 +169,44 @@ const menus = ref([
 /* ------------------------------------------------------------------ */
 /* Cart state                                                          */
 /* ------------------------------------------------------------------ */
+const CART_STORAGE_KEY = "cartItems";
 const cart = ref([]);
+
+const toNumber = value => {
+  const amount = Number(String(value ?? 0).replace(/[^0-9.-]/g, ""));
+  return Number.isFinite(amount) ? amount : 0;
+};
+
+const loadCart = () => {
+  try {
+    const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+    const parsedCart = savedCart ? JSON.parse(savedCart) : [];
+    cart.value = Array.isArray(parsedCart)
+      ? parsedCart.map(item => ({
+          ...item,
+          price: toNumber(item.price),
+          qty: Math.max(1, Number.parseInt(item.qty, 10) || 1),
+        }))
+      : [];
+  } catch (error) {
+    console.error("Error loading cart:", error);
+    cart.value = [];
+  }
+};
+
+onMounted(loadCart);
+
+watch(
+  cart,
+  value => {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(value));
+    } catch (error) {
+      console.error("Error saving cart:", error);
+    }
+  },
+  { deep: true },
+);
 
 const addToCart = item => {
   const existing = cart.value.find(c => c.id === item.id);
@@ -185,7 +222,7 @@ const cartCount = computed(() =>
 );
 
 const cartTotal = computed(() =>
-  cart.value.reduce((total, c) => total + Number(c.price) * c.qty, 0),
+  cart.value.reduce((total, c) => total + toNumber(c.price) * c.qty, 0),
 );
 
 const viewOrder = () => {
