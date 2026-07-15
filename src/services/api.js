@@ -47,7 +47,16 @@ export const getOrders = async () => {
     throw error;
   }
 }
-
+// get all products
+export const getProducts = async () => {
+  try {
+    const response = await api.get('/products');
+    return response.data;
+  } catch (error) {
+    console.error("Get Products Fail:", error);
+    throw error;
+  }
+};
 export const updateCategory = async (id, payload) => {
   try {
     const response = await api.put(`/categories/${id}`, payload);
