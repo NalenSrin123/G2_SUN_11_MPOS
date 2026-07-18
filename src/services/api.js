@@ -58,4 +58,14 @@ export const updateCategory = async (id, payload) => {
   }
 };
 
+
+export const loginUser = async (email, password) => {
+  try {
+    const response = await api.post("/auth/login", { email, password });
+    return response.data;
+  } catch (error) {
+    console.error("Login failed:", error);
+    throw error;
+  }
+};
 export default api
