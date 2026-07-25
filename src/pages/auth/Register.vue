@@ -50,8 +50,11 @@
 <script setup>
 // Imports: Vue composition API helpers and base UI components
 import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
+
+const router = useRouter()
 
 // `loading` toggles UI state while async requests are ongoing
 const loading = ref(false)
@@ -76,5 +79,6 @@ const onSubmit = async () => {
   await new Promise(r => setTimeout(r, 1000))
 
   loading.value = false
+  router.push('/verify_otp')
 }
 </script>

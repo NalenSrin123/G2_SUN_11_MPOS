@@ -1,10 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 @import "tailwindcss";
 
 @layer base {
   :root {
-    --font-sans: "Poppins", sans-serif;
+    --font-sans: "Outfit", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
     --font-khmer: "Kantumruy Pro", sans-serif;
+    --dashboard-bg: #f1f4f9;
+    --dashboard-surface: #ffffff;
+    --dashboard-blue: #2563eb;
+    --dashboard-blue-dark: #1d4ed8;
+    --dashboard-blue-light: #eff6ff;
+    --dashboard-text: #0f172a;
+    --dashboard-muted: #64748b;
+    --dashboard-border: #e2e8f0;
+    --dashboard-green: #059669;
+    --dashboard-red: #dc2626;
+    --dashboard-radius: 14px;
+    --dashboard-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.06);
   }
 }
 

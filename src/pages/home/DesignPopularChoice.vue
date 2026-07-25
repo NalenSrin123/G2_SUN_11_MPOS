@@ -1,13 +1,6 @@
 <script setup>
 import { ref, computed, nextTick } from "vue";
-import { useRouter } from "vue-router";
-import { ShoppingCart } from "lucide-vue-next";
 
-const router = useRouter();
-
-/* ------------------------------------------------------------------ */
-/* Header / Popular Choices state (from DesignPopularChoice.vue)       */
-/* ------------------------------------------------------------------ */
 const activeCategory = ref("All");
 const searchQueries = ref("");
 const isMobileSearchOpen = ref(false);
@@ -133,74 +126,11 @@ const filteredItems = computed(() => {
     return matchesCategory && matchesSearch;
   });
 });
-
-/* ------------------------------------------------------------------ */
-/* Main Menu state (converted from MenuPage.vue Options API)          */
-/* ------------------------------------------------------------------ */
-const menus = ref([
-  {
-    id: 1,
-    name: "Seared Atlantic Salmon",
-    description:
-      "Crispy skin salmon, citrus quinoa, asparagus, and saffron sauce.",
-    price: 28.0,
-    image:
-      "https://i.pinimg.com/736x/09/15/d6/0915d6bce8a0c6dcd6c5990b68d7f79c.jpg",
-  },
-  {
-    id: 2,
-    name: "Garden Zenith Bowl",
-    description:
-      "Avocado, heirloom tomatoes, roasted seeds and tahini dressing.",
-    price: 22.0,
-    image:
-      "https://i.pinimg.com/736x/eb/61/e4/eb61e4f1005f16ec9a5c522d10374d85.jpg",
-  },
-  {
-    id: 3,
-    name: "The Luxe Burger",
-    description: "Wagyu beef, aged cheddar, gold leaf fries and truffle aioli.",
-    price: 35.0,
-    image:
-      "https://i.pinimg.com/736x/9e/23/db/9e23db5ce9f76ae8407beddfdc4ebb6a.jpg",
-  },
-]);
-
-/* ------------------------------------------------------------------ */
-/* Cart state                                                          */
-/* ------------------------------------------------------------------ */
-const cart = ref([]);
-
-const addToCart = item => {
-  const existing = cart.value.find(c => c.id === item.id);
-  if (existing) {
-    existing.qty += 1;
-  } else {
-    cart.value.push({ ...item, qty: 1 });
-  }
-};
-
-const cartCount = computed(() =>
-  cart.value.reduce((total, c) => total + c.qty, 0),
-);
-
-const cartTotal = computed(() =>
-  cart.value.reduce((total, c) => total + Number(c.price) * c.qty, 0),
-);
-
-const viewOrder = () => {
-  router.push({ name: "cart" });
-};
-// for product detail page
-const goToProductDetail = item => {
-  router.push(`/product-detail`);
-};
 </script>
 
 <template>
   <div
-    class="min-h-screen bg-white pb-24 font-sans text-slate-900 selection:bg-blue-100">
-    <!-- ================= HEADER ================= -->
+    class="min-h-screen bg-white pb-8 font-sans text-slate-900 selection:bg-blue-100">
     <header
       class="sticky top-0 z-50 bg-white shadow-sm transition-shadow duration-300 lg:bg-white/90 lg:backdrop-blur-md">
       <div
@@ -267,9 +197,7 @@ const goToProductDetail = item => {
       </div>
     </header>
 
-    <!-- ================= BODY ================= -->
     <main class="mx-auto max-w-6xl px-4 pt-4 lg:px-8">
-      <!-- ---- Category filter nav ---- -->
       <nav class="mb-6 overflow-x-auto no-scrollbar lg:mb-8">
         <div class="flex gap-3 pb-1">
           <button
@@ -287,7 +215,6 @@ const goToProductDetail = item => {
         </div>
       </nav>
 
-      <!-- ---- Popular Choices section ---- -->
       <section>
         <div class="mb-4 flex items-center justify-between">
           <h2 class="text-xl font-bold text-slate-900 lg:text-2xl">
@@ -311,7 +238,6 @@ const goToProductDetail = item => {
           <div
             v-for="item in filteredItems"
             :key="item.id"
-            @click="goToProductDetail(item)"
             :class="[
               'relative flex items-end overflow-hidden rounded-2xl bg-cover bg-center shadow-sm border border-slate-100 transition-all duration-200',
               'h-45 lg:h-65 lg:cursor-pointer lg:hover:-translate-y-1 lg:hover:shadow-blue-100 lg:hover:shadow-xl',
@@ -350,74 +276,7 @@ const goToProductDetail = item => {
           </div>
         </div>
       </section>
-
-      <!-- ---- Main Menu section ---- -->
-      <section class="mt-10">
-        <h2
-          class="text-3xl md:text-4xl font-bold mb-6 text-center md:text-left">
-          Main Menu
-        </h2>
-
-        <div
-          
-          v-for="item in menus"
-          :key="item.id"
-          class="bg-white rounded-2xl p-4 mb-5 shadow-sm border border-slate-100 cursor-pointer hover:shadow-md">
-          <div class="flex items-center justify-between relative">
-            <!-- Left Section -->
-            <div class="flex gap-3 md:gap-5" @click="goToProductDetail(item)">
-              <img
-                :src="item.image"
-                :alt="item.name"
-                class="w-32 h-32 rounded-xl object-cover shrink-0" />
-
-              <div class="flex flex-col justify-between">
-                <div>
-                  <h3
-                    class="font-semibold text-base md:text-lg leading-6 max-w-xs">
-                    {{ item.name }}
-                  </h3>
-                  <p class="text-gray-500 text-sm md:text-base line-clamp-2">
-                    {{ item.description }}
-                  </p>
-                </div>
-
-                <!-- Price -->
-                <p class="text-green-800 text-lg md:text-xl font-bold mt-2">
-                  ${{ item.price }}.00
-                </p>
-              </div>
-            </div>
-
-            <!-- Add Button -->
-            <button
-              @click="addToCart(item)"
-              class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-green-800 text-white text-2xl flex items-center justify-center hover:bg-green-700 transition absolute right-0 bottom-0">
-              +
-            </button>
-          </div>
-        </div>
-      </section>
     </main>
-
-    <!-- ================= VIEW ORDER BAR ================= -->
-    <button
-      @click="viewOrder"
-      class="fixed bottom-4 left-1/2 z-40 flex w-[calc(100%-2rem)] max-w-md -translate-x-1/2 items-center justify-between rounded-2xl bg-emerald-800 px-5 py-4 text-white shadow-lg transition active:scale-[0.98] lg:max-w-lg">
-      <span class="flex items-center gap-3">
-        <span class="relative">
-          <ShoppingCart class="h-5 w-5" />
-          <span
-            class="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold">
-            {{ cartCount }}
-          </span>
-        </span>
-        <span class="text-sm font-semibold lg:text-base">View your order</span>
-      </span>
-      <span class="text-sm font-bold lg:text-base"
-        >${{ cartTotal.toFixed(2) }}</span
-      >
-    </button>
   </div>
 </template>
 
